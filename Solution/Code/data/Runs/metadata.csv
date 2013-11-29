@@ -1,0 +1,149 @@
+Naam;   Nb; Trained; Surface; Sec
+
+Annelien;  1; n; Woodchip; 3.32
+Annelien;  2; n; Woodchip; 3.41
+Annelien;  3; n; Woodchip; 3.34
+Annelien;  4; n; Asphalt;  2.87
+Annelien;  5; n; Asphalt;  2.94
+Annelien;  6; n; Asphalt;  2.96
+Annelien;  7; n; Track;    2.58
+Annelien;  8; n; Track;    2.62
+Annelien;  9; n; Track;    2.54
+
+Yllia;  1; n; Woodchip; 3.35
+Yllia;  2; n; Woodchip; 3.21
+Yllia;  3; n; Woodchip; 3.03
+Yllia;  4; n; Asphalt;  3.15
+Yllia;  5; n; Asphalt;  2.81
+Yllia;  6; n; Asphalt;  3.01
+Yllia;  7; n; Track;    2.91
+Yllia;  8; n; Track;    2.81
+Yllia;  9; n; Track;    2.71
+
+Annick; 1; n; Woodchip; 3.24
+Annick; 2; n; Woodchip; 3.42
+Annick; 3; n; Woodchip; 3.34
+Annick; 4; n; Asphalt;  3.11
+Annick; 5; n; Asphalt;  3.15
+Annick; 6; n; Asphalt;  3.04
+Annick; 7; n; Track;    3.02
+Annick; 8; n; Track;    2.93
+Annick; 9; n; Track;    2.79
+
+Hanne;  1; y; Woodchip; 2.41
+Hanne;  2; y; Woodchip; 2.60
+Hanne;  3; y; Woodchip; 2.61
+Hanne;  4; y; Asphalt;  2.39
+Hanne;  5; y; Asphalt;  2.66
+Hanne;  6; y; Asphalt;  2.44
+Hanne;  7; y; Track;    2.17
+Hanne;  8; y; Track;    2.15
+Hanne;  9; y; Track;    2.14
+
+Tina;   1; n; Woodchip; 4.22
+Tina;   2; n; Woodchip; 4.41
+Tina;   3; n; Asphalt;  3.78
+Tina;   4; n; Asphalt;  3.59
+Tina;   5; n; Track;    3.47
+Tina;   6; n; Track;    3.42
+
+Sofie;  1; y; Woodchip; 2.28
+Sofie;  2; y; Woodchip; 2.66
+Sofie;  3; y; Woodchip; 2.78
+Sofie;  4; y; Asphalt;  2.56
+Sofie;  5; y; Asphalt;  2.54
+Sofie;  6; y; Asphalt;  2.40
+Sofie;  7; y; Track;    2.26
+Sofie;  8; y; Track;    2.26
+Sofie;  9; y; Track;    2.35
+
+Ann;    1; y; Woodchip; ?
+Ann;    2; y; Woodchip; 2.81
+Ann;    3; y; Woodchip; 3.28
+Ann;    4; y; Asphalt;  2.37
+Ann;    5; y; Asphalt;  ?
+Ann;    6; y; Asphalt;  2.27
+Ann;    7; y; Track;    2.17
+Ann;    8; y; Track;    2.03
+Ann;    9; y; Track;    2.32
+
+Jolien; 1; n; Woodchip; 2.83
+Jolien; 2; n; Woodchip; 2.81
+Jolien; 3; n; Woodchip; 2.97
+Jolien; 4; n; Asphalt;  2.69
+Jolien; 5; n; Asphalt;  2.86
+Jolien; 6; n; Asphalt;  2.87
+Jolien; 7; n; Track;    2.37
+Jolien; 8; n; Track;    2.41
+Jolien; 9; n; Track;    2.65
+
+Tinne;  1; y; Woodchip; 3.26
+Tinne;  2; y; Woodchip; 3.07
+Tinne;  3; y; Woodchip; 3.01
+Tinne;  4; y; Asphalt;  2.73
+Tinne;  5; y; Asphalt;  2.65
+Tinne;  6; y; Asphalt;  2.74
+Tinne;  7; y; Track;    2.70
+Tinne;  8; y; Track;    2.73
+Tinne;  9; y; Track;    2.67
+
+Floor;  1; y; Woodchip; ?
+Floor;  2; y; Woodchip; 2.50
+Floor;  3; y; Woodchip; 2.32
+Floor;  4; y; Asphalt;  1.96
+Floor;  5; y; Asphalt;  1.81
+Floor;  6; y; Asphalt;  1.85
+Floor;  7; y; Track;    ?
+Floor;  8; y; Track;    ?
+Floor;  9; y; Track;    1.52
+
+Emmy;   1; n; Woodchip; 3.32
+Emmy;   2; n; Woodchip; 3.75
+Emmy;   3; n; Woodchip; 3.79
+Emmy;   4; n; Asphalt;  3.21
+Emmy;   5; n; Asphalt;  3.15
+Emmy;   6; n; Asphalt;  3.49
+Emmy;   7; n; Track;    2.73
+Emmy;   8; n; Track;    2.87
+Emmy;   9; n; Track;    3.02
+
+Nina;   1; n; Woodchip; 3.09
+Nina;   2; n; Woodchip; 3.39
+Nina;   3; n; Woodchip; 3.40
+Nina;   4; n; Asphalt;  3.37
+Nina;   5; n; Asphalt;  3.56
+Nina;   6; n; Asphalt;  3.44
+Nina;   7; n; Track;    2.90
+Nina;   8; n; Track;    2.99
+Nina;   9; n; Track;    ?
+
+Laura;  1; n; Woodchip; 3.27
+Laura;  2; n; Woodchip; 3.08
+Laura;  3; n; Woodchip; 3.20
+Laura;  4; n; Asphalt;  3.16
+Laura;  5; n; Asphalt;  3.08
+Laura;  6; n; Asphalt;  3.23
+Laura;  7; n; Track;    2.71
+Laura;  8; n; Track;    2.78
+Laura;  9; n; Track;    2.56
+
+Vreni;  1; y; Woodchip; 2.62
+Vreni;  2; y; Woodchip; 2.64
+Vreni;  3; y; Woodchip; 2.50
+Vreni;  4; y; Asphalt;  2.33
+Vreni;  5; y; Asphalt;  2.25
+Vreni;  6; y; Asphalt;  2.32
+Vreni;  7; y; Track;    1.85
+Vreni;  8; y; Track;    1.97
+Vreni;  9; y; Track;    1.96
+
+Mara;   1; y; Woodchip; ?
+Mara;   2; y; Woodchip; ?
+Mara;   3; y; Woodchip; ?
+Mara;   4; y; Asphalt;  ?
+Mara;   5; y; Asphalt;  ?
+Mara;   6; y; Asphalt;  ?
+Mara;   7; y; Track;    ?
+Mara;   8; y; Track;    ?
+Mara;   9; y; Track;    ?
+
