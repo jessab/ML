@@ -11,13 +11,14 @@ class Sample(object):
     '''
 
 
-    def __init__(self, filename):
+    def __init__(self, testsubject, nb):
         '''
         Constructor
         '''
-        self.filename = filename
-        self.max = Feature(max)
-        self.min = Feature(min)
+        self.testsubject = testsubject
+        self.max = Feature(maxi)
+        self.min = Feature(mini)
+        self.classification = Classification(trained, terrain)
         
     def getMax(self):
         return self.max
@@ -27,3 +28,12 @@ class Sample(object):
     
     def getAttributes(self):
         return [self.getMax(), self.getMin()]
+    
+    def isTrained(self):
+        return self.classification.trained
+    
+    def getTerrain(self):
+        return self.classification.terrain
+    
+    def getClassification(self):
+        return self.classification
