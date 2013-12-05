@@ -13,7 +13,7 @@
 
 import numpy as np
 from math import pi, log, factorial, fabs
-#import pylab
+import pylab
 import matplotlib.pyplot as plt
 from scipy import fft, ifft
 from scipy.optimize import curve_fit
@@ -327,7 +327,8 @@ def peakdetect_fft(y_axis, x_axis, pad_len = 5):
     #pylab.plot(range(len(fft_data)), fft_data)
     #pylab.show(block=True)
     
-    plt.plot(x_axis, y_axis)
+    #plt.plot(x_axis, y_axis)
+    plt.plot(x_axis,y_axis)
     plt.hold(True)
     plt.plot(x_axis_ifft, y_axis_ifft)
     #for max_p in max_peaks:
