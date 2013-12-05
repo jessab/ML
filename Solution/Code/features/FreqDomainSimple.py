@@ -14,7 +14,6 @@ def toFreq(data) :
     data = data.apply(lambda ar: firstZero(ar),axis=0)
     index = pd.MultiIndex.from_arrays([range(len(data.index))])
     data.index = index
-    print(data.Ax)
     return data
 
 def firstZero(ar):
@@ -36,7 +35,6 @@ def getFirstN(data, n):
 
 def getNMainFreqs(data, n):
     data = data.apply(lambda ar: getLargestN(ar, n), axis=0)
-    print(data)
     
     dic = dict()
     for label in data.index:

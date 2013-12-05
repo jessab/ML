@@ -56,23 +56,6 @@ def accproctest() :
                             plot=True, verbose=True)
 
     pylab.show()
-    
-def getNMainFreqsForWindows(ar,n,width,freq):
-    windows = sliding_window(ar,width,freq)
-    return map((lambda ar : getNMainFreqs(ar,n)), windows)
-    
-def getNMainFreqs(ar, n):
-    freqdom = fft(ar)
-    freqdom = map (abs, freqdom)
-    
-    res = []
-    
-    for _ in range(n):
-        index = freqdom.index(min(freqdom))
-        freqdom[index] = 0
-        res.append(index)
-    
-    return res
 
     
 def sliding_window(ar, width, freq):

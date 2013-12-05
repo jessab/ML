@@ -51,8 +51,8 @@ def preprocessGCDC(data):
     # Print some statistics on the raw data
     avgA  = [np.mean(a.values) for a in (data.Ax, data.Ay, data.Az)]
     avgAn = [a/1024. for a in avgA]
-    for avgs, avg, avgn in zip(['Ax','Ay','Az'], avgA, avgAn):
-        print("Avg {} : {: 8.2f} -> {: 4.2f}g".format(avgs, avg, avgn))
+    #for avgs, avg, avgn in zip(['Ax','Ay','Az'], avgA, avgAn):
+    #    print("Avg {} : {: 8.2f} -> {: 4.2f}g".format(avgs, avg, avgn))
 
     # Rescale values and removes partly the gravitational component
     # This is an approximation to make the signal balanced. To do this

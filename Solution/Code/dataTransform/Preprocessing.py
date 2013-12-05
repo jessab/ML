@@ -10,13 +10,10 @@ from dataTransform.accproc import preprocessGCDC
 from symbol import except_clause
 from compiler.pycodegen import EXCEPT
 
-def getDir(subject, plaats):
-    return "../data/Runs/" + subject + "/" + plaats + "/"
 
 def filterRun(data):
     peaks = ac.detectPeaksGCDC(data, "Atotal",smooth={'type':'hilbert','window':64})
     peaks = zip(*peaks)
-    print (peaks)
     xset = peaks[0]
     yset = peaks[1]
         
@@ -44,7 +41,12 @@ def filterRun(data):
     data = data[minx:maxx]
     return data
 
+   
+
+   
+   
 if __name__ == '__main__':
+    
     subject = "Vreni"
     plaats = "enkel"
     fdir = getDir(subject, plaats);
@@ -57,14 +59,8 @@ if __name__ == '__main__':
             data = filterRun(data);
         except:
             continue
-        
+         
         data.plot()
     pylab.show()
-   
-   
-def standardize(data) :
-    #todo
-     return data
-
-    
+ 
 
