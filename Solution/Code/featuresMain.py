@@ -52,9 +52,7 @@ def checkPath(path):
         path+="\\"
     return path
 
-def main(path="data\Runs\\"):
-    path=checkPath(path)
-    
+def loadData(path):
     metadata = loadMetaData(path)
     metadata['Features']= metadata.apply(lambda row : getFeatures(path, row['Name'],row['Nb']),axis=1)
     metadata = metadata[metadata.apply(lambda x: x['Features'] is not None, axis=1)]
@@ -64,9 +62,52 @@ def main(path="data\Runs\\"):
     print(metadata)
     return metadata
 
+
+def main(checkForExistingData=True, path="data\Runs\\"):
+    path=checkPath(path)
+    
+    if(checkForExistingData) :
+        try :
+            data = pd.read_csv(path+"data.csv", sep=";", index_col=1)
+            return data
+        except:
+            return loadData(path)
+        
+    return loadData(path)
+        
+            
+    
+
+
 if __name__ == '__main__':
     args = sys.argv
-    if len(args)>1:
-        main(args[1])
-    else :
-        main()
+    
+    hasDataPath = False
+    hasCheck = False
+    
+    next=None
+    
+    for i in range(len(args)):
+        val = args[i]
+        if val=="datapath":
+            next = val
+        elif val=="checkexisting":
+            next = val
+        elif next=="datapath":
+            dataPath=val
+            hasDataPath=True
+        elif next=="checkexisting":
+            check=val
+            hasCheck=True
+            
+    if hasDataPath & hasCheck:
+        main(check,dataPath)
+    
+    elif hasDataPath:
+        main(datapath=dataPath)
+    
+    elif hasCheck:
+        main(checkForExistingData=check)
+        
+    else: main()
+    

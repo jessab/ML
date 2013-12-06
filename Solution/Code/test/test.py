@@ -72,7 +72,8 @@ def sliding_window(ar, width, freq):
     return res
 
 if __name__ == '__main__':
-    data = pd.read_pickle("..\data\Runs\data.txt")
+    data = pd.read_csv("..\data\Runs\data.csv", sep=";", index_col=1)
+    #data.to_csv("..\data\Runs\data.csv", sep=";")
     print(data)
     print(data.Features)
     

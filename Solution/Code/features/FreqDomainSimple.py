@@ -3,8 +3,7 @@ Created on 5-dec.-2013
 
 @author: jessa
 '''
-from scipy import fft, ifft
-import numpy as np
+from scipy import fft
 import pandas as pd
 
 def toFreq(data) :

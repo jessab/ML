@@ -7,10 +7,11 @@ Created on 6-dec.-2013
 import featuresMain as fm
 import sys
 
-def main(savepath="data\Runs\data.txt",datapath="data\Runs\\"):
+def main(savepath="data\Runs\data.csv",datapath="data\Runs\\"):
     data = fm.main(datapath)
-    data.to_pickle(savepath)
-    
+    data.to_csv("..\data\Runs\data.csv", sep=";")
+    # Read with:
+    #    data = pd.read_csv(savepath, sep=";", index_col=1)
     
 
 if __name__ == '__main__':
