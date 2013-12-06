@@ -75,8 +75,8 @@ def sliding_window(ar, width, freq):
     return res
 
 if __name__ == '__main__':
+    data = ac.readGCDCFormat("..\data\Runs\Example\enkel\DATA-001.csv")
+    data = ac.preprocessGCDC(data)
+    peaks = ac.detectPeaksGCDC(data)
+    print(peaks)
     
-    data = fm.main()
-    index=119
-    n = data.Sec[index]
-    print(pd.isnull(n))

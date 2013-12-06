@@ -13,7 +13,7 @@
 
 import numpy as np
 from math import pi, log, factorial, fabs
-import pylab
+#import pylab
 import matplotlib.pyplot as plt
 from scipy import fft, ifft
 from scipy.optimize import curve_fit
@@ -767,7 +767,7 @@ def _test_graph():
     
 
 def savitzky_golay(y, window_size, order, deriv=0, rate=1):
-    r"""Smooth (and optionally differentiate) data with a Savitzky-Golay filter.
+    """Smooth (and optionally differentiate) data with a Savitzky-Golay filter.
     The Savitzky-Golay filter removes high frequency noise from data.
     It has the advantage of preserving the original shape and
     features of the signal better than other types of filtering

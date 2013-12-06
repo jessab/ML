@@ -5,6 +5,7 @@ Created on 5-dec.-2013
 '''
 from scipy import fft
 import pandas as pd
+from tools.Tools import getFun
 
 def toFreq(data) :
     data = data.apply(fft, axis=0)
@@ -18,11 +19,6 @@ def toFreq(data) :
 def firstZero(ar):
     ar[0]=0
     return ar
-
-def getFun(data, func, prefix):
-    features = data.apply(func, axis=0)
-    features.rename(lambda x: prefix+ '.'+ x,inplace=True)
-    return features.to_dict()
 
 
 def getFirstN(data, n):
@@ -67,7 +63,6 @@ def getLargestN(ser, n):
 
 def getSimpleFreqDomainFeatures(data):
     data = toFreq(data)
-    data.Atotal.plot()
     features = getFirstN(data, 10)
     features.update(getNMainFreqs(data,5))
     

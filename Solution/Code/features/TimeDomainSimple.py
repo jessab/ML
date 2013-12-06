@@ -5,11 +5,7 @@ Created on 5-dec.-2013
 '''
 
 import numpy as np
-
-def getFun(data, func, prefix):
-    features = data.apply(func, axis=0)
-    features.rename(lambda x: prefix+ '.'+ x,inplace=True)
-    return features.to_dict()
+from tools.Tools import getFun
 
 def getMeans(data):
     return getFun(data, np.mean, 'mean')
