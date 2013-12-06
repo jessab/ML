@@ -25,5 +25,5 @@
 ehthumbs.db
 Thumbs.db
 
-*.project
-*.pydevproject
+Solution/Code/.project
+Solution/Code/.pydevproject

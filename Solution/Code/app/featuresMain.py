@@ -63,7 +63,7 @@ def loadData(path):
     return metadata
 
 
-def main(checkForExistingData=True, path="data\Runs\\"):
+def main(checkForExistingData=True, path="..\data\Runs\\"):
     path=checkPath(path)
     
     if(checkForExistingData) :

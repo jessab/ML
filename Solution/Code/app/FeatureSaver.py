@@ -4,11 +4,11 @@ Created on 6-dec.-2013
 @author: jessa
 '''
 
-import featuresMain as fm
+import app.featuresMain as fm
 import sys
 
 def main(savepath="data\Runs\data.csv",datapath="data\Runs\\"):
-    data = fm.main(datapath)
+    data = fm.main(False,datapath)
     data.to_csv("..\data\Runs\data.csv", sep=";")
     # Read with:
     #    data = pd.read_csv(savepath, sep=";", index_col=1)

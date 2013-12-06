@@ -12,6 +12,7 @@ import pylab
 import math
 from scipy import fft, ifft
 import pandas as pd
+import app.featuresMain as fm
 
 def accproctest() :
     data = ac.readGCDCFormat("..\data\Runs\Example\enkel\DATA-001.csv")
@@ -72,8 +73,7 @@ def sliding_window(ar, width, freq):
     return res
 
 if __name__ == '__main__':
-    data = pd.read_csv("..\data\Runs\data.csv", sep=";", index_col=1)
-    #data.to_csv("..\data\Runs\data.csv", sep=";")
+    data = fm.main()
     print(data)
     print(data.Features)
     
