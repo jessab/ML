@@ -34,9 +34,10 @@ def getData(path,name,nb) :
     data = ac.preprocessGCDC(data)
     try:
         data = pp.filterRun(data);
-        return data
     except:
         return None
+    data = ac.preprocessGCDC(data)
+    return data
     
 def getFeatures(path,name,nb) :
     data = getData(path,name,nb)
@@ -47,7 +48,8 @@ def getFeatures(path,name,nb) :
 
 
 def checkPath(path):
-    #if not ends on \ then add it
+    if path[-1]!="\\" :
+        path+="\\"
     return path
 
 def main(path="data\Runs\\"):

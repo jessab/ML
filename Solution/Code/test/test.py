@@ -11,6 +11,7 @@ from IPython.core.display import display
 import pylab
 import math
 from scipy import fft, ifft
+import pandas as pd
 
 def accproctest() :
     data = ac.readGCDCFormat("..\data\Runs\Example\enkel\DATA-001.csv")
@@ -71,8 +72,7 @@ def sliding_window(ar, width, freq):
     return res
 
 if __name__ == '__main__':
-    data = ac.readGCDCFormat("..\data\Runs\Example\enkel\DATA-001.csv")
-    data = ac.preprocessGCDC(data)
-    print(fa.extract(data))
-    pylab.show()
+    data = pd.read_pickle("..\data\Runs\data.txt")
+    print(data)
+    print(data.Features)
     
