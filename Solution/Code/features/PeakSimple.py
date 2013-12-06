@@ -81,4 +81,4 @@ if __name__ == '__main__':
     import dataTransform.accproc as ac
     data = ac.readGCDCFormat("..\data\Runs\Example\enkel\DATA-001.csv")
     data = ac.preprocessGCDC(data)
-    print(getSimpleFreqDomainFeatures(data))
+    print(getSimplePeakFeatures(data))

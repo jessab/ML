@@ -9,9 +9,6 @@ import dataTransform.accproc as ac
 import dataTransform.Preprocessing as pp
 import features.FeatureExtraction as fa
 import sys
-from pandas.core.config import is_int
-import numpy as np
-import types
 
 def loadMetaData(path):
     filename = path + "metadata.csv"
@@ -103,18 +100,18 @@ if __name__ == '__main__':
     hasDataPath = False
     hasCheck = False
     
-    next=None
+    nextV=None
     
     for i in range(len(args)):
         val = args[i]
         if val=="datapath":
-            next = val
+            nextV = val
         elif val=="checkexisting":
-            next = val
-        elif next=="datapath":
+            nextV = val
+        elif nextV=="datapath":
             dataPath=val
             hasDataPath=True
-        elif next=="checkexisting":
+        elif nextV=="checkexisting":
             check=val
             hasCheck=True
             

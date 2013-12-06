@@ -38,10 +38,10 @@ def getNMainFreqs(data, n):
     return dic
         
 
-def extractList(list, label, type):
+def extractList(lijst, label, type):
     dic = dict()
     i=0
-    for el in list:
+    for el in lijst:
         dic[type+`i`+'.'+label]=el
         i+=1
     return dic

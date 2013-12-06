@@ -7,8 +7,6 @@ import accproc as ac
 import pylab
 import os
 from dataTransform.accproc import preprocessGCDC
-from symbol import except_clause
-from compiler.pycodegen import EXCEPT
 
 
 def filterRun(data):

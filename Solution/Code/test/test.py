@@ -77,6 +77,6 @@ def sliding_window(ar, width, freq):
 if __name__ == '__main__':
     data = ac.readGCDCFormat("..\data\Runs\Example\enkel\DATA-001.csv")
     data = ac.preprocessGCDC(data)
-    peaks = ac.detectPeaksGCDC(data)
-    print(peaks)
+    features = fa.extract(data)
+    print(features)
     

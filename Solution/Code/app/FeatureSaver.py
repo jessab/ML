@@ -20,18 +20,18 @@ if __name__ == '__main__':
     hasDataPath = False
     hasSavePath = False
     
-    next=None
+    nextV=None
     
     for i in range(len(args)):
         val = args[i]
         if val=="datapath":
-            next = val
+            nextV = val
         elif val=="savepath":
-            next = val
-        elif next=="datapath":
+            nextV = val
+        elif nextV=="datapath":
             dataPath=val
             hasDataPath=True
-        elif next=="savepath":
+        elif nextV=="savepath":
             savePath=val
             hasSavePath=True
             
