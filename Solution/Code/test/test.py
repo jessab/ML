@@ -13,6 +13,8 @@ import math
 from scipy import fft, ifft
 import pandas as pd
 import app.featuresMain as fm
+import numpy as np
+from tools.Tools import getDictArray
 
 def accproctest() :
     data = ac.readGCDCFormat("..\data\Runs\Example\enkel\DATA-001.csv")
@@ -73,7 +75,8 @@ def sliding_window(ar, width, freq):
     return res
 
 if __name__ == '__main__':
-    data = fm.main()
-    print(data)
-    print(data.Features)
     
+    data = fm.main()
+    index=119
+    n = data.Sec[index]
+    print(pd.isnull(n))
