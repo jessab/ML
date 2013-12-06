@@ -59,7 +59,7 @@ def varAbsPeak(peaks):
 
 
 
-def getSimpleFreqDomainFeatures(data):
+def getSimplePeakFeatures(data):
     peaks = toPeaks(data)
     features = applyFun(peaks,avDistanceBetweenPeaks, 'avDist')
     features.update(applyFun(peaks,varDistanceBetweenPeaks, 'varDist'))
