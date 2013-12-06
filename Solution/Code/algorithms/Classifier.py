@@ -6,18 +6,37 @@ Created on 5-dec.-2013
 from sklearn import svm, cross_validation, tree, datasets
 from sklearn.externals.six import StringIO  
 from sklearn.feature_extraction import DictVectorizer
-import pydot 
+import pydot
+    
+def classifyData(data, classifyTrained, classifySurface, classifierClass):
+    features = data.Features
+    vec = DictVectorizer()
+    samples = vec.fit_transform(features)
+    names = vec.get_feature_names()
+    
+    if (classifyTrained):
+        classifications = data.Trained
+    elif (classifySurface):
+        classifications = data.Surface
+        
+    else:
+        raise NotImplementedError("Combined classification has not yet been implemented")
+    classifier = classifierClass(samples,names,classifications)
+    return classifier
+
+def classifyDataDT(data, classifyTrained, classifySurface):
+    return classifyData(data, classifyTrained, classifySurface, DTClassifier)
+
+def classifyDataSVM(data, classifyTrained, classifySurface):
+    return classifyData(data, classifyTrained, classifySurface, SVMClassifier)
     
 class Classifier(object):
     '''
     classdocs
     '''
-    def __init__(self,samples,classifications):
-#         vec = DictVectorizer()
-#         self.samples = vec.fit_transform(samples)
-#         self.names = vec.get_feature_names()
+    def __init__(self,samples,featureNames,classifications):
         self.samples = samples
-        self.names = ["sepal length","sepal width","petal length","petal width"]
+        self.names = featureNames
         self.classifications = classifications
         
         self.fit()
@@ -52,18 +71,18 @@ class Classifier(object):
     
 class SVMClassifier(Classifier):
     
-    def __init__(self, samples, classifications):
+    def __init__(self, samples, featureNames, classifications):
         self.clf = svm.SVC()
-        Classifier.__init__(self, samples, classifications)
+        Classifier.__init__(self, samples, featureNames, classifications)
         
     def getClf(self):
         return self.clf
     
 class DTClassifier(Classifier):
     
-    def __init__(self, samples, classifications):
+    def __init__(self, samples, featureNames, classifications):
         self.clf = tree.DecisionTreeClassifier()
-        Classifier.__init__(self, samples, classifications)
+        Classifier.__init__(self, samples, featureNames, classifications)
         
     def getClf(self):
         return self.clf
@@ -76,8 +95,10 @@ class DTClassifier(Classifier):
     
     
 if __name__ == '__main__':
-    iris = datasets.load_iris()
-    dtclf = DTClassifier(iris.data,iris.target)
+#     iris = datasets.load_iris()
+#     dtclf = DTClassifier(iris.data, ["sep len", "pet wdt", "sep len", "pet wdt"], iris.target)
+    data = [{'name':'A','Val':1},{'name':'B','Val':2},
+            {'name':'C','Val':3},{'name':'A','Val':2},{'name':'E','Val':1},{'name':'B','Val':1}]
     dtclf.crossValidation()
     dtclf.createTreePdf()
     dtclf.getFeatureImportances()
