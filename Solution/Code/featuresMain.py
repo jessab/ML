@@ -74,9 +74,7 @@ def main(checkForExistingData=True, path="data\Runs\\"):
             return loadData(path)
         
     return loadData(path)
-        
-            
-    
+ 
 
 
 if __name__ == '__main__':
