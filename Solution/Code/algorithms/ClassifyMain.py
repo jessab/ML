@@ -12,11 +12,19 @@ def main(path=""):
         data = fm.main(True,path)
     else:
         data = fm.main()
-    classifier = cl.classifyDataDT(data, True, False);
+    evalSVM(data, True,False)
+
+def evalSVM(data, classifyTrained, classifySurface):
+    classifier = cl.classifyDataSVM(data, classifyTrained, classifySurface);
+    classifier.crossValidation()
+    classifier.getSupportVectors()
+    
+def evalDT(data, classifyTrained, classifySurface):
+    classifier = cl.classifyDataDT(data, classifyTrained, classifySurface);
     classifier.crossValidation()
     classifier.getFeatureImportances()
-
-
+    classifier.createTreePdf()
+    
 if __name__ == '__main__':
     args = sys.argv
     if len(args)>1:
