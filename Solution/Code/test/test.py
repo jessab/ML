@@ -74,9 +74,32 @@ def sliding_window(ar, width, freq):
     
     return res
 
+def getFeatures(path,name,nb) :
+    from features.PeakSimple import applyFun, toPeaks, varDistanceBetweenPeaks
+    data = fm.getData(path,name,nb)
+    print(data  )
+    if data is None:
+        print("NONE")
+        return None
+    print("SOME")
+    peaks = toPeaks(data)
+    print(peaks)
+    features = applyFun(peaks,varDistanceBetweenPeaks, 'varDist')
+    return features
+
 if __name__ == '__main__':
-    data = ac.readGCDCFormat("..\data\Runs\Example\enkel\DATA-001.csv")
-    data = ac.preprocessGCDC(data)
-    features = fa.extract(data)
-    print(features)
+    
+    path="..\data\Runs\\"
+    metadata = fm.loadMetaData(path)
+    print(metadata)
+    metadata['Features']= metadata.apply(lambda row : getFeatures(path, row['Name'],row['Nb']),axis=1)
+    metadata = metadata[metadata.apply(lambda x: x['Features'] is not None, axis=1)]
+    metadata['Sec'] =metadata.apply(lambda x : fm.questionMarkToNaN(x['Sec'] ),axis=1)
+    metadata['Trained'] =metadata.apply(lambda x : fm.ynToTF(x['Trained'] ),axis=1)
+    metadata['Nb']=metadata['Nb'].astype(int)
+    index = pd.MultiIndex.from_arrays([range(len(metadata.index))])
+    metadata.index = index
+    print(metadata.Features)
+    print(metadata)
+    metadata.to_csv(path+"vardata.csv", sep=";")
     

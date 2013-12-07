@@ -12,5 +12,5 @@ def extract(data):
     
     features = fds.getSimpleFreqDomainFeatures(data)
     features.update(tds.getSimpleTimeDomainFeatures(data))
-    features.update(ps.getSimplePeakFeatures(data))
+    #features.update(ps.getSimplePeakFeatures(data))
     return features

@@ -8,7 +8,9 @@ from dataTransform.accproc import detectPeaksGCDC
 
 def toPeaks(data) :
     #TODO Add more peaks
-    return {'default':np.transpose(detectPeaksGCDC(data,columnname='Ax'))}
+    peaks = detectPeaksGCDC(data)
+    trans = np.transpose(peaks)
+    return {'default':peaks}
 
 def applyFun(dic, fun, postfix):
     return dict({k + "." + postfix: fun(dic[k]) for k in dic.keys()})
@@ -58,6 +60,8 @@ def getSimplePeakFeatures(data):
     
 if __name__ == '__main__':
     import dataTransform.accproc as ac
+    import dataTransform.Preprocessing as pp
     data = ac.readGCDCFormat("..\data\Runs\Example\enkel\DATA-001.csv")
     data = ac.preprocessGCDC(data)
+    data = pp.filterRun(data)
     print(getSimplePeakFeatures(data))
