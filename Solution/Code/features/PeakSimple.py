@@ -5,15 +5,51 @@ Created on 6-dec.-2013
 '''
 import numpy as np
 from dataTransform.accproc import detectPeaksGCDC
-import pylab
 
 def toPeaks(data) :
-    #TODO Add more peaks
-    peaks = detectPeaksGCDC(data)
-    return {'default':np.transpose(peaks)}
+    #TODO play with windows and stuff
+    
+    def genDictEntry(detType, smoothType, smoothCor):
+        
+        if smoothType is None:
+            key = detType+'_notSmooth'
+        else:
+            key = detType+'_'+smoothType
+        if smoothCor :
+            key += '_cor'
+        else :
+            key += '_ncor'
+        try:
+            if smoothType is None :
+                val= np.transpose(detectPeaksGCDC(data,detection={'type':detType}, smooth=None))
+            else:
+                val = np.transpose(detectPeaksGCDC(data,detection={'type':detType}, smooth={'type':smoothType, 'correct':smoothCor}))
+            if len(val[0])<10:
+                val=None
+            return {key:val}
+        except:
+            return {key:None}
+    
+    peaks = genDictEntry('simple', None, None)
+    peaks.update(genDictEntry('simple','hilbert',True))
+    peaks.update(genDictEntry('simple','hilbert',False))
+    peaks.update(genDictEntry('simple','sg',True))
+    peaks.update(genDictEntry('simple','sg',False))
+    peaks.update(genDictEntry('simple','butter',True))
+    peaks.update(genDictEntry('simple','butter',False))
+    peaks.update(genDictEntry('cwt',None,None))
+    peaks.update(genDictEntry('cwt','hilbert',True))
+    peaks.update(genDictEntry('cwt','hilbert',False))
+    peaks.update(genDictEntry('cwt','sg',True))
+    peaks.update(genDictEntry('cwt','sg',False))
+    peaks.update(genDictEntry('cwt','butter',True))
+    peaks.update(genDictEntry('cwt','butter',False))
+    return peaks
 
 def applyFun(dic, fun, postfix):
-    return dict({k + "." + postfix: fun(dic[k]) for k in dic.keys()})
+    res = dict({k + "." + postfix: fun(dic[k]) for k in dic.keys() if dic[k] is not None})
+    res.update(dict({k+"."+postfix:None for k in dic.keys() if dic[k] is None}))
+    return res
     
 def avDistanceBetweenPeaks(peaks):
     x=peaks[0]
@@ -61,8 +97,10 @@ def getSimplePeakFeatures(data):
 if __name__ == '__main__':
     import dataTransform.accproc as ac
     import dataTransform.Preprocessing as pp
-    data = ac.readGCDCFormat("..\data\Runs\Example\enkel\DATA-001.csv")
-    data = ac.preprocessGCDC(data)
-    filtered = pp.filterRun3(data)
-    print(getSimplePeakFeatures(data))
-    pylab.show()
+    for i in range(9):
+        nb = int(i+1)
+        if nb== 4:
+            data = ac.readGCDCFormat("..\data\Runs\Tina\enkel\DATA-00" + `nb` + ".csv")
+            data = ac.preprocessGCDC(data)
+            filtered = pp.filterRun3(data)
+            print(getSimplePeakFeatures(data))

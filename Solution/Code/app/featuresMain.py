@@ -39,6 +39,7 @@ def getData(path,name,nb) :
     return data
     
 def getFeatures(path,name,nb) :
+    print(name+`nb`)
     data = getData(path,name,nb)
     if data is None:
         return None

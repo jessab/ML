@@ -159,32 +159,43 @@ def filterRun(data):
    
    
 if __name__ == '__main__':
+    datadir = "..\data\Runs\Annick\enkel\DATA-004.csv"
+    data = ac.readGCDCFormat(datadir)
+    data = preprocessGCDC(data)
+    #data.plot()
+    try:
+        data = filterRun3(data);
+        data.plot()
+    except:
+        print("failed")
+        
+    pylab.show()
+        
     
 #     subjects = ["Ann","Annick","Emmy"]
 #     subjects = ["Example","Floor","Hanne"]
 #     subjects = ["Jolien","Laura","Mara"]
-    subjects = ["Nina","Sofie","Tina","Vreni"]
+#     subjects = ["Nina","Sofie","Tina","Vreni"]
 #     subjects = ["Tinne","Vreni","Yllia"]
-#     subjects = ["Tina"]
-    plaats = "enkel"
-    j=0
-    
-    for subject in subjects : 
-        fdir = "..\data\Runs\\"+ subject + "\enkel\\"
-        for i in range(len(os.listdir(fdir))):
-            j+=1
-            datadir = fdir + "DATA-00"+str(i+1) + ".csv"
-            data = ac.readGCDCFormat(datadir)
-            data = preprocessGCDC(data)
-            #data.plot()
-            try:
-                data = filterRun3(data);
-                data.plot()
-            except:
-                print(`j`+" "+subject + `i`)
-                data.plot()
-                continue
-         
-    pylab.show()
- 
-
+#     subjects = ["Annick"]
+#     plaats = "enkel"
+#     j=0
+#     
+#     for subject in subjects : 
+#         fdir = "..\data\Runs\\"+ subject + "\enkel\\"
+#         for i in range(len(os.listdir(fdir))):
+#             j+=1
+#             datadir = fdir + "DATA-00"+str(i+1) + ".csv"
+#             data = ac.readGCDCFormat(datadir)
+#             data = preprocessGCDC(data)
+#             #data.plot()
+#             try:
+#                 data = filterRun3(data);
+#                 data.plot()
+#             except:
+#                 print(`j`+" "+subject + `i`)
+#                 data.plot()
+#                 continue
+#          
+#     pylab.show()
+# 
