@@ -89,17 +89,27 @@ def getFeatures(path,name,nb) :
     return features
 
 if __name__ == '__main__':
-#     path="..\data\Runs\\"
-#     metadata = fm.loadMetaData(path)
-#     print(metadata)
-#     metadata['Features']= metadata.apply(lambda row : getFeatures(path, row['Name'],row['Nb']),axis=1)
-#     metadata = metadata[metadata.apply(lambda x: x['Features'] is not None, axis=1)]
-#     metadata['Sec'] =metadata.apply(lambda x : fm.questionMarkToNaN(x['Sec'] ),axis=1)
-#     metadata['Trained'] =metadata.apply(lambda x : fm.ynToTF(x['Trained'] ),axis=1)
-#     metadata['Nb']=metadata['Nb'].astype(int)
-#     index = pd.MultiIndex.from_arrays([range(len(metadata.index))])
-#     metadata.index = index
-#     print(metadata.Features)
-#     print(metadata)
-#     metadata.to_csv(path+"vardata.csv", sep=";")
+    from tools.Tools import getDictArray
+    data = fm.main()
+    trained = data.Trained.values
+    print(trained)
+    features = getDictArray(data.Features)
+
+    def plot(name):
+        y = [v['default.' + name] for v in features]
+        fig, ax = plt.subplots()
+        ax.scatter(trained,y)
+        fig.tight_layout()
+        ax.set_title(name)
+        
+    plot('varDist')
+    plot('varPeak')
+    plot('maxPeak')
+    plot('maxDist')
+    plot('minPeak')
+    plot('minDist')
+    plot('avPeak')
+    plot('avDist')
+    
+    plt.show()
     

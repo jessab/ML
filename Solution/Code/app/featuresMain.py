@@ -84,8 +84,6 @@ def main(checkForExistingData=True, path="..\data\Runs\\"):
     if(checkForExistingData) :
         try :
             data = pd.read_csv(path+"data.csv", sep=";", index_col=0)
-            print(data.Features)
-            print(data)
             return data
         except:
             return loadData(path)
