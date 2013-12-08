@@ -5,12 +5,12 @@ Created on 6-dec.-2013
 '''
 import numpy as np
 from dataTransform.accproc import detectPeaksGCDC
+import pylab
 
 def toPeaks(data) :
     #TODO Add more peaks
     peaks = detectPeaksGCDC(data)
-    trans = np.transpose(peaks)
-    return {'default':peaks}
+    return {'default':np.transpose(peaks)}
 
 def applyFun(dic, fun, postfix):
     return dict({k + "." + postfix: fun(dic[k]) for k in dic.keys()})
@@ -63,5 +63,6 @@ if __name__ == '__main__':
     import dataTransform.Preprocessing as pp
     data = ac.readGCDCFormat("..\data\Runs\Example\enkel\DATA-001.csv")
     data = ac.preprocessGCDC(data)
-    data = pp.filterRun(data)
+    filtered = pp.filterRun3(data)
     print(getSimplePeakFeatures(data))
+    pylab.show()

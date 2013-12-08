@@ -4,12 +4,13 @@ Created on 5-dec.-2013
 @author: Koen
 '''
 from sklearn import svm, cross_validation, tree, datasets
+from sklearn.neighbors import NearestNeighbors, KNeighborsClassifier
 from sklearn.externals.six import StringIO  
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.preprocessing import Imputer
+import matplotlib.pyplot as plt
 import tools.Tools as tls
 import numpy as np
-import pydot
 
 def surfaces():
     return ["Asphalt","Track", "Woodchip"]
@@ -32,7 +33,6 @@ def classifyData(data, classifyTrained, classifySurface, classifierClass):
         classifications = np.asarray(classifications)
     else:
         raise NotImplementedError("Combined classification has not yet been implemented")
-    print(classifications)
     classifier = classifierClass(samples,names,classifications)
     
     
@@ -43,7 +43,11 @@ def classifyDataDT(data, classifyTrained, classifySurface):
 
 def classifyDataSVM(data, classifyTrained, classifySurface):
     return classifyData(data, classifyTrained, classifySurface, SVMClassifier)
-    
+
+def classifyDataKNN(data,classifyTrained, classifySurface):
+    return classifyData(data, classifyTrained, classifySurface, KNNClassifier)
+
+
 class Classifier(object):
     '''
     classdocs
@@ -86,7 +90,7 @@ class SVMClassifier(Classifier):
     def getClf(self):
         return self.clf
     
-    def getSupportVectors(self):
+    def showSupportVectors(self):
         svArray = self.getClf().n_support_
         print("Support vectors:")
         for i,svector in enumerate(svArray):
@@ -102,7 +106,7 @@ class DTClassifier(Classifier):
     def getClf(self):
         return self.clf
     
-    def getFeatureImportances(self):
+    def showFeatureImportances(self):
         featureArray = self.getClf().feature_importances_
         print("Feature importance:")
         for i,feature in enumerate(featureArray):
@@ -110,18 +114,32 @@ class DTClassifier(Classifier):
                 print(" %s:\t%f" % (self.names[i], feature))
      
     def createTreePdf(self):
+        import pydot
         dot_data = StringIO()
         tree.export_graphviz(self.getClf(), out_file = dot_data, feature_names=self.names)
         graph = pydot.graph_from_dot_data(dot_data.getvalue()) 
         graph.write_pdf("tree.pdf") 
     
+class KNNClassifier(Classifier):
+    def __init__(self, samples, featureNames, classifications,k=5):
+        self.clf = KNeighborsClassifier(n_neighbors=k) #TODO try balltree
+        Classifier.__init__(self, samples, featureNames, classifications)
+        
+    def getClf(self):
+        return self.clf
+    
+    def showKNeighborsGraph(self):
+        graph = self.getClf().kneighbors_graph(self.samples)
+        graph = graph.todense()
+        plt.imshow(graph)
     
 if __name__ == '__main__':
     iris = datasets.load_iris()
     print(iris.target)
-    dtclf = SVMClassifier(iris.data, ["sep len", "pet wdt", "sep len", "pet wdt"], iris.target)
-    dtclf.crossValidation()
-#     dtclf.createTreePdf()
-    dtclf.getFeatureImportances()
+    clf = KNNClassifier(iris.data, ["sep len", "pet wdt", "sep len", "pet wdt"], iris.target)
+    clf.crossValidation()
+#     clf.createTreePdf()
+#     clf.showFeatureImportances()
+    clf.showKNeighborsGraph()
     
     

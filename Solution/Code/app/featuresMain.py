@@ -32,10 +32,10 @@ def getData(path,name,nb) :
         return None
     data = ac.preprocessGCDC(data)
     try:
-        data = pp.filterRun(data);
+        data = pp.filterRun3(data);
     except:
         return None
-    data = ac.preprocessGCDC(data)
+#     data = ac.preprocessGCDC(data)
     return data
     
 def getFeatures(path,name,nb) :
@@ -84,8 +84,6 @@ def main(checkForExistingData=True, path="..\data\Runs\\"):
     if(checkForExistingData) :
         try :
             data = pd.read_csv(path+"data.csv", sep=";", index_col=0)
-            print(data.Features)
-            print(data)
             return data
         except:
             return loadData(path)
