@@ -32,10 +32,10 @@ def getData(path,name,nb) :
         return None
     data = ac.preprocessGCDC(data)
     try:
-        data = pp.filterRun(data);
+        data = pp.filterRun3(data);
     except:
         return None
-    data = ac.preprocessGCDC(data)
+#     data = ac.preprocessGCDC(data)
     return data
     
 def getFeatures(path,name,nb) :

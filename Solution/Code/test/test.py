@@ -15,6 +15,7 @@ import pandas as pd
 import app.featuresMain as fm
 import numpy as np
 from tools.Tools import getDictArray
+from cgi import maxlen
 
 def accproctest() :
     data = ac.readGCDCFormat("..\data\Runs\Example\enkel\DATA-001.csv")
@@ -88,18 +89,17 @@ def getFeatures(path,name,nb) :
     return features
 
 if __name__ == '__main__':
-    
-    path="..\data\Runs\\"
-    metadata = fm.loadMetaData(path)
-    print(metadata)
-    metadata['Features']= metadata.apply(lambda row : getFeatures(path, row['Name'],row['Nb']),axis=1)
-    metadata = metadata[metadata.apply(lambda x: x['Features'] is not None, axis=1)]
-    metadata['Sec'] =metadata.apply(lambda x : fm.questionMarkToNaN(x['Sec'] ),axis=1)
-    metadata['Trained'] =metadata.apply(lambda x : fm.ynToTF(x['Trained'] ),axis=1)
-    metadata['Nb']=metadata['Nb'].astype(int)
-    index = pd.MultiIndex.from_arrays([range(len(metadata.index))])
-    metadata.index = index
-    print(metadata.Features)
-    print(metadata)
-    metadata.to_csv(path+"vardata.csv", sep=";")
+#     path="..\data\Runs\\"
+#     metadata = fm.loadMetaData(path)
+#     print(metadata)
+#     metadata['Features']= metadata.apply(lambda row : getFeatures(path, row['Name'],row['Nb']),axis=1)
+#     metadata = metadata[metadata.apply(lambda x: x['Features'] is not None, axis=1)]
+#     metadata['Sec'] =metadata.apply(lambda x : fm.questionMarkToNaN(x['Sec'] ),axis=1)
+#     metadata['Trained'] =metadata.apply(lambda x : fm.ynToTF(x['Trained'] ),axis=1)
+#     metadata['Nb']=metadata['Nb'].astype(int)
+#     index = pd.MultiIndex.from_arrays([range(len(metadata.index))])
+#     metadata.index = index
+#     print(metadata.Features)
+#     print(metadata)
+#     metadata.to_csv(path+"vardata.csv", sep=";")
     
