@@ -5,6 +5,8 @@ Created on 5-dec.-2013
 '''
 import dataTransform.accproc as ac
 import pandas as pd
+import numpy as np
+from tools.Tools import getFun
 
 def get1DVel(time,accSet,peaks):
     velocity = [(time[0],0)]
@@ -55,8 +57,6 @@ def getMaxs(data):
 
 def getMedians(data):
     return getFun(data, np.median, 'median')
-
-
 
 def getVelocityFeatures(data):
     data = getVelocity(data)

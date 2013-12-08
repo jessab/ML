@@ -79,7 +79,7 @@ class Classifier(object):
         return self.getClf().score(samples, classifications)
         
     def crossValidation(self):
-        scores = cross_validation.cross_val_score(self.getClf(), self.getSamples(), self.getClassifications(),cv=20)
+        scores = cross_validation.cross_val_score(self.getClf(), self.getSamples(), self.getClassifications())
         print("Accuracy: \n mean:%f \n std:%f\n" % (scores.mean(), scores.std()))
     
 class SVMClassifier(Classifier):
@@ -115,7 +115,10 @@ class DTClassifier(Classifier):
                 print(" %s:\t%f" % (self.names[i], feature))
      
     def createTreePdf(self):
-        import pydot
+        try:
+            import pydot
+        except:
+            return
         dot_data = StringIO()
         tree.export_graphviz(self.getClf(), out_file = dot_data, feature_names=self.names)
         graph = pydot.graph_from_dot_data(dot_data.getvalue()) 
@@ -123,7 +126,7 @@ class DTClassifier(Classifier):
     
 class KNNClassifier(Classifier):
     def __init__(self, samples, featureNames, classifications,k=5):
-        self.clf = KNeighborsClassifier(n_neighbors=k) #TODO try balltree
+        self.clf = KNeighborsClassifier(n_neighbors=k, weights='distance')
         Classifier.__init__(self, samples, featureNames, classifications)
         
     def getClf(self):
@@ -137,10 +140,10 @@ class KNNClassifier(Classifier):
     
 if __name__ == '__main__':
     iris = datasets.load_iris()
-    clf = KNNClassifier(iris.data, ["sep len", "pet wdt", "sep len", "pet wdt"], iris.target)
+    clf = SVMClassifier(iris.data, ["sep len", "pet wdt", "sep len", "pet wdt"], iris.target)
     clf.crossValidation()
 #     clf.createTreePdf()
 #     clf.showFeatureImportances()
-    clf.showKNeighborsGraph()
+#     clf.showKNeighborsGraph()
     
     

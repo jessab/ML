@@ -8,6 +8,7 @@ import TimeDomainSimple as tds
 import FreqDomainSimple as fds
 import PeakSimple as ps
 import Velocity as vs
+
 def extract(data):
     
     features = fds.getSimpleFreqDomainFeatures(data)
