@@ -9,6 +9,7 @@ from sklearn.externals.six import StringIO
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.preprocessing import Imputer
 import matplotlib.pyplot as plt
+from matplotlib import colors
 import tools.Tools as tls
 import numpy as np
 
@@ -78,7 +79,7 @@ class Classifier(object):
         return self.getClf().score(samples, classifications)
         
     def crossValidation(self):
-        scores = cross_validation.cross_val_score(self.getClf(), self.getSamples(), self.getClassifications(),cv=10)
+        scores = cross_validation.cross_val_score(self.getClf(), self.getSamples(), self.getClassifications(),cv=20)
         print("Accuracy: \n mean:%f \n std:%f\n" % (scores.mean(), scores.std()))
     
 class SVMClassifier(Classifier):
@@ -131,11 +132,11 @@ class KNNClassifier(Classifier):
     def showKNeighborsGraph(self):
         graph = self.getClf().kneighbors_graph(self.samples)
         graph = graph.todense()
-        plt.imshow(graph)
+        cmap = colors.ListedColormap(['white', 'black'])
+        plt.imshow(graph,cmap)
     
 if __name__ == '__main__':
     iris = datasets.load_iris()
-    print(iris.target)
     clf = KNNClassifier(iris.data, ["sep len", "pet wdt", "sep len", "pet wdt"], iris.target)
     clf.crossValidation()
 #     clf.createTreePdf()
