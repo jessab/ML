@@ -974,14 +974,14 @@ def detectPeaksGCDC(data, columnname="Atotal", detection=None, smooth=None, plot
         #if plot and verbose: plt.vlines(xmf, plotlim[0], plotlim[1], colors='r', linestyles='dashed')
 
         if ss['correct']:
-          _max = curPeakdetect(y, x)
-          xm,_ = zip(*_max)
-          #if plot and verbose: plt.vlines(xm, plotlim[0], plotlim[1], colors='r', linestyles='solid')
+            _max = curPeakdetect(y, x)
+            xm,_ = zip(*_max)
+            #if plot and verbose: plt.vlines(xm, plotlim[0], plotlim[1], colors='r', linestyles='solid')
 
-          ri = idxOfCloseValues(xm, xmf, dist=ss['dist'])
-          _max = [_max[idx] for idx in ri]
+            ri = idxOfCloseValues(xm, xmf, dist=ss['dist'])
+            _max = [_max[idx] for idx in ri]
         else:
-          _max = _maxf
+            _max = _maxf
 
     else:
         _max = curPeakdetect(y, x)
