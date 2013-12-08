@@ -5,7 +5,7 @@ Created on 5-dec.-2013
 '''
 from scipy import fft
 import pandas as pd
-from tools.Tools import getFun
+from tools.Tools import getFun, getCoVars
 
 def toFreq(data) :
     data = data.apply(fft, axis=0)
@@ -65,5 +65,6 @@ def getSimpleFreqDomainFeatures(data):
     data = toFreq(data)
     features = getFirstN(data, 10)
     features.update(getNMainFreqs(data,5))
+    features.update(getCoVars(data, 'freq'))
     
     return features

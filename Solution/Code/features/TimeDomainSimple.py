@@ -5,7 +5,7 @@ Created on 5-dec.-2013
 '''
 
 import numpy as np
-from tools.Tools import getFun
+from tools.Tools import getFun, getCoVars
 
 def getMeans(data):
     return getFun(data, np.mean, 'mean')
@@ -20,10 +20,12 @@ def getMedians(data):
     return getFun(data, np.median, 'median')
 
 
+
 def getSimpleTimeDomainFeatures(data):
     features = getMeans(data)
     features.update(getMins(data))
     features.update(getMaxs(data))
     features.update(getMedians(data))
+    features.update(getCoVars(data,'time'))
     
     return features
