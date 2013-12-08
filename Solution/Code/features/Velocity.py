@@ -6,6 +6,8 @@ Created on 5-dec.-2013
 import dataTransform.accproc as ap
 import matplotlib.pyplot as ppl
 import pandas as pd
+import numpy as np
+from tools.Tools import getFun
 
 def get1DVel(time,accSet,peaks):
     velocity = [(time[0],0)]
@@ -36,7 +38,8 @@ def getVelocity(data):
     time = data.index
     
     velocity = []
-    for v in ["Ax","Ay","Az"] :
+    axes = ["Ax","Ay","Az"]
+    for v in axes :
         peaks = ac.detectPeaksGCDC(filtered, v)
         peaks = zip(*peaks)
 #         ppl.plot(peaks[0],peaks[1])
@@ -45,7 +48,29 @@ def getVelocity(data):
         vel = get1DVel(time, data[v], peaks);
         velocity.append(vel)
         
-    return pd.concat(velocity, axis=1)
+    velocity = pd.concat(velocity, axis=1)
+    velocity.columns = ["Vx","Vy","Vz"]
+    return velocity
+
+def getMeans(data):
+    return getFun(data, np.mean, 'mean')
+
+def getMins(data):
+    return getFun(data, np.min, 'min')
+    
+def getMaxs(data):
+    return getFun(data, np.max, 'max')
+
+def getMedians(data):
+    return getFun(data, np.median, 'median')
+
+def getVelocityFeatures(data):
+    features = getMeans(data)
+    features.update(getMins(data))
+    features.update(getMaxs(data))
+    features.update(getMedians(data))
+    
+    return features
     
 if __name__ == '__main__':
     import dataTransform.accproc as ac
