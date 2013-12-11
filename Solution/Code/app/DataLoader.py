@@ -50,7 +50,7 @@ def getFeatures(path,name,nb,features,existing):
     def obtainFeatures(anckleData,hipData,features) :
         
         try:
-            features = fa.extract(anckleData, hipData, features)
+            return fa.extract(anckleData, hipData, features)
         except:
             return None
         
@@ -70,12 +70,14 @@ def getFeatures(path,name,nb,features,existing):
     f = obtainFeatures(anckleData, hipData, features)
     
     if f is None:
+        print('no features')
         return None
     
     if existing is not None:
         existing = literal_eval(existing)
         existing.update(f)
         f=existing
+        print(f)
     return str(f)
     
 

@@ -39,8 +39,11 @@ def getVelocity(data,cols):
     velocity = dict()
     for v in cols:
         orgCol="A"+v[1:]
-        peaks = np.transpose(ac.detectPeaksGCDC(data, orgCol,smooth={'type':'sg'}))[0]
-        velocity[v] = get1DVel(time, data[orgCol], peaks);
+        try:
+            peaks = np.transpose(ac.detectPeaksGCDC(data, orgCol,smooth={'type':'sg'}))[0]
+            velocity[v] = get1DVel(time, data[orgCol], peaks);
+        except:
+            continue
         
     return pd.DataFrame.from_dict(velocity)
 
