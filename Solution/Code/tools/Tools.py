@@ -10,12 +10,12 @@ def getDictArray(series):
     vals = series.values
     return [literal_eval(dic) for dic in vals]
 
-def getFun(data, func, prefix):
+def getFun(data, func, postfix):
     features = data.apply(func, axis=0)
-    features.rename(lambda x: prefix+ '.'+ x,inplace=True)
+    features.rename(lambda x: x+'.'+postfix,inplace=True)
     return features.to_dict()
 
-def getCoVars(data,prefix,includeVar=True):
+def getCoVars(data,coVarsName='covar', includeVar=True):
     cov = data.cov()
     
     res = dict()
@@ -33,7 +33,7 @@ def getCoVars(data,prefix,includeVar=True):
                     name = col+row
                 else :
                     name = row+col
-                res[prefix+'.'+name+'.covar']=cov[col][row]
+                res[name+'.'+coVarsName]=cov[col][row]
         if includeVar:
             done+=col
     

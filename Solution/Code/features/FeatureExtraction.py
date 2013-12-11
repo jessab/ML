@@ -9,11 +9,60 @@ import FreqDomainSimple as fds
 import PeakSimple as ps
 import Velocity as vs
 
-def extract(data):
+
+def checkRequiredFeatures(requiredFeatures,generatedFeatures):
+    generatedFeatures = {'time':None, 'freq': None, 'peak':None, 'vel':None}
+    if requiredFeatures is None:
+        requiredFeatures = generatedFeatures
+    generatedFeatures.update(requiredFeatures)
     
-    features = fds.getSimpleFreqDomainFeatures(data)
-    features.update(tds.getSimpleTimeDomainFeatures(data))
-    features.update(ps.getSimplePeakFeatures(data))
-    features.update(vs.getVelocityFeatures(data))
+    return generatedFeatures
+
+def extractBodyPart(data, bodyPart, requiredFeatures=None):
+    requiredFeatures=checkRequiredFeatures(requiredFeatures,{'time':None, 'freq': None, 'peak':None, 'vel':None})
+    
+    
+    features = dict()
+    features.update(fds.getSimpleFreqDomainFeatures(data,requiredFeatures['freq']))
+    features.update(tds.getSimpleTimeDomainFeatures(data,requiredFeatures['time']))
+    features.update(ps.getSimplePeakFeatures(data,requiredFeatures['peak']))
+    features.update(vs.getVelocityFeatures(data,requiredFeatures['vel']))
+    
+    features = dict((bodyPart+'.'+key,features[key]) for key in features.keys())
     
     return features
+
+def extract(anckleData,hipData,requiredFeatures=None):
+    requiredFeatures = checkRequiredFeatures(requiredFeatures,{'anckle':None,'hip':None})
+    
+    features = dict()
+    
+    features.update(extractBodyPart(anckleData, 'anckle', requiredFeatures['anckle']))
+    features.update(extractBodyPart(hipData, 'hip', requiredFeatures['hip']))
+    
+    return features
+
+def getAllFeatures():
+    part = {
+        'time': {
+                 'cols': tds.posCols(),
+                 'features': tds.posFeatures().keys()
+                 }, 
+        'freq': {
+                 'cols': fds.posCols(),
+                 'features': fds.posFeatures().keys()
+                 },
+        'vel' : {
+                 'cols': vs.posCols(),
+                 'features': vs.posFeatures().keys()
+                 },
+        'peak': {
+                 'cols': ps.posPeaks(),
+                 'features': ps.posFeatures().keys()
+                 }
+        }
+    
+    return {
+        'anckle':part,
+        'hip':part   
+        }

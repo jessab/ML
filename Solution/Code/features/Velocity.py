@@ -6,7 +6,7 @@ Created on 5-dec.-2013
 import dataTransform.accproc as ac
 import pandas as pd
 import numpy as np
-from tools.Tools import getFun
+from tools.Tools import getFun, getCoVars
 
 def get1DVel(time,accSet,peaks):
     velocity = [(time[0],0)]
@@ -33,51 +33,66 @@ def get1DVel(time,accSet,peaks):
 #     print (velocity)
     return velocity
 
-def getVelocity(data):
+def getVelocity(data,cols):
     time = data.index
     
     velocity = dict()
-    for v in ["Ax","Ay","Az"] :
-        peaks = np.transpose(ac.detectPeaksGCDC(data, v))[0]
-        velocity["V"+v[1:]] = get1DVel(time, data[v], peaks);
+    for v in cols:
+        orgCol="A"+v[1:]
+        peaks = np.transpose(ac.detectPeaksGCDC(data, orgCol,smooth={'type':'sg'}))[0]
+        velocity[v] = get1DVel(time, data[orgCol], peaks);
         
     return pd.DataFrame.from_dict(velocity)
 
-import numpy as np
-from tools.Tools import getFun, getCoVars
-
-def getMeans(data):
-    return getFun(data, np.mean, 'mean')
-
-def getMins(data):
-    return getFun(data, np.min, 'min')
+def posFeatures():
+    return {
+        'av' : (np.average,True),
+        'covar': (getCoVars,False),
+        'min': (np.min,True),
+        'max': (np.max,True),
+        'median': (np.median,True)
+    }
     
-def getMaxs(data):
-    return getFun(data, np.max, 'max')
+def posCols():
+    return ['Vx','Vy','Vz']
 
-def getMedians(data):
-    return getFun(data, np.median, 'median')
-
-def getVelocityFeatures(data):
-    data = getVelocity(data)
-    features = getMeans(data)
-    features.update(getMins(data))
-    features.update(getMaxs(data))
-    features.update(getMedians(data))
-    features.update(getCoVars(data,'velocity'))
+def checkRequiredFeatures(requiredFeatures):
+    generatedFeatures = {'cols':posCols(), 'features':posFeatures().keys()}
+    if requiredFeatures is None:
+        requiredFeatures = generatedFeatures
+    generatedFeatures.update(requiredFeatures)
+    generatedFeatures['cols']= [col for col in generatedFeatures['cols'] if col in posCols()]
+    generatedFeatures['features']= [f for f in generatedFeatures['features'] if f in posFeatures().keys()]
     
+    return generatedFeatures
+    
+    
+
+def getVelocityFeatures(data, requiredFeatures=None):
+    requiredFeatures = checkRequiredFeatures(requiredFeatures)
+    data = getVelocity(data,requiredFeatures['cols'])
+    
+    features = dict()
+    for f in requiredFeatures['features']:
+        fun,useGetFun = posFeatures()[f]
+        if useGetFun:
+            ff = getFun(data,fun,f)
+        else :
+            ff = fun(data,f)
+        features.update(ff)
+        
     return features
+
     
 if __name__ == '__main__':
-    import dataTransform.accproc as ac
     import dataTransform.Preprocessing as pp
     data = ac.readGCDCFormat("..\data\Runs\Example\enkel\DATA-001.csv")
     data = ac.preprocessGCDC(data)
     filtered = pp.filterRun3(data)
     
-    velocity = getVelocity(filtered)
+    velocity = getVelocity(filtered,['Vx','Vz'])
     print velocity
-    features = getVelocityFeatures(filtered)
+    features = getVelocityFeatures(filtered,{'cols':['Vx'],'features':['covar','av']})
     print(features)
     
 #     velocity.plot()

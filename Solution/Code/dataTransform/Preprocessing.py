@@ -8,6 +8,7 @@ import pylab
 import os
 from dataTransform.accproc import preprocessGCDC
 import numpy as np
+import pandas as pd
 
 def moveAv(ar, window,n):
     if n==1 :
@@ -18,71 +19,19 @@ def moveAv(ar, window,n):
 def moveVar(ar,window):
     return [np.var(ar[i:i+window]) for i in range(len(ar)-window)]
 
-def filterRun2(data):
+
+
+def filterRun3(data,hip):
     vals = data.Atotal.values
-    length = len(vals)
     window = 400
     checkInterval = 100
     safetygap = 800
-    averages = moveAv(vals,window,1)
-    averages = moveAv(averages,window,checkInterval)
+    mvars = moveVar(vals,window)
     
-    maxav = max(averages)
-    limit = maxav/2
-    possibilities = []
-    curSi=0
-    nbGoodsInARow = 0
-    nbBadsInThisSeries = 0
-    minGoodsInARow = 4
-    maxFracOfBads = 0.05
-    minLength = int(3*safetygap/checkInterval)
-     
-    for i in range(len(averages)) :
-        if averages[i]>limit :
-            nbGoodsInARow+=1
-        else :
-            nbBadsInThisSeries+=1
-            if nbGoodsInARow<minGoodsInARow:
-                l = i+1-curSi
-                if (l>minLength) & (nbBadsInThisSeries/l<maxFracOfBads) :
-                    possibilities.append((curSi,i))
-                nbBadsInThisSeries=0
-                curSi=i+1
-            nbGoodsInARow=0
-             
-    minx,maxx = possibilities[np.argmax(map(lambda (mn,mx):mx-mn,possibilities))]
-    minx = minx*checkInterval
-    maxx = maxx*checkInterval
-#             
-#     if len(possibilities)>0 :
-#         minx,maxx = possibilities[np.argmax(map(lambda (mn,mx):mx-mn,possibilities))]
-#         averages = [0]*(minx-1+safetygap)+[1]*((maxx-minx+window-2*safetygap)
-#         
-#     else :
-#         averages = []
-    
-#     averages+= [0]*(length-len(averages))
-            
-        
-    
-   # Set all averages that are smaller than the max to zero
-   # Extract the possibilities as the oppeenvolgende ones
-   # Choose best possibilitie(longest)
-   # Remove begin and end (2s)
-    
-#     data['smooth']=averages
-    return data[minx+safetygap:maxx-safetygap]
-#     return data
-
-
-def filterRun3(data):
-    vals = data.Atotal.values
-    length = len(vals)
-    window = 400
-    checkInterval = 100
-    safetygap = 800
-    vars = moveVar(vals,window)
-    #vars = moveAv(vars,checkInterval,checkInterval)
+    ##
+#     mvars2 =mvars + [0]*(len(vals)-len(mvars))
+#     data['vars'] = mvars2
+    ##
      
     possibilities = []
     curSi=0
@@ -91,10 +40,14 @@ def filterRun3(data):
     minGoodsInARow = 4
     maxFracOfBads = 0.05
     minLength = int(3*safetygap/checkInterval)
-      
-    for i in range(int(len(vars)/checkInterval)) :
-        v = np.average(vars[i*checkInterval:(i+1)*checkInterval])
-        if v>0.2 :
+    if(hip):
+        minvar=0.05
+    else:
+        minvar =0.2
+       
+    for i in range(int(len(mvars)/checkInterval)) :
+        v = np.average(mvars[i*checkInterval:(i+1)*checkInterval])
+        if v>minvar :
             nbGoodsInARow+=1
         else :
             nbBadsInThisSeries+=1
@@ -106,23 +59,18 @@ def filterRun3(data):
                 curSi=i+1
             nbGoodsInARow=0
              
-#     if len(possibilities)==0:
-#         vars = []
-#      
-#     else :
-#         minx,maxx = possibilities[np.argmax(map(lambda (mn,mx):mx-mn,possibilities))]
-#         minx = minx*checkInterval
-#         maxx = maxx*checkInterval
-#         vars = [0]*(minx-1+safetygap)+[5]*(maxx-minx-2*safetygap)
-#                                                
-#     vars+= [0]*(length-len(vars))
-#     data['vars']=vars
-#     return data
     minx,maxx = possibilities[np.argmax(map(lambda (mn,mx):mx-mn,possibilities))]
     minx = minx*checkInterval+safetygap
     maxx = maxx*checkInterval-safetygap
     
+    
+#     decision = [0]*minx+[1]*(maxx-minx)
+#     decision+= [0]*(len(vals)-len(decision))
+    
+#     data['decision'] = decision
+     
     return data[minx:maxx]
+#     return data
 
 def filterRun(data):
     peaks = ac.detectPeaksGCDC(data, "Atotal",smooth={'type':'hilbert','window':64})
@@ -159,43 +107,27 @@ def filterRun(data):
    
    
 if __name__ == '__main__':
-    datadir = "..\data\Runs\Annick\enkel\DATA-004.csv"
-    data = ac.readGCDCFormat(datadir)
-    data = preprocessGCDC(data)
-    #data.plot()
-    try:
-        data = filterRun3(data);
-        data.plot()
-    except:
-        print("failed")
+    subjects = ['Vreni','Annick','Tina','Tinne']
+    subjects = ['Ann','Emmy', 'Floor']
+    subjects = ['Hanne', 'Jolien','Laura']
+    subjects = ['Mara','Nina','Sofie','Yllia']
+    
+    for sub in subjects:
+        print(sub)
+        for i in range(9):
+            nb= int(i+1)
+            print(nb)
+            datadir = "..\..\Runs\\"+sub+"\heup\DATA-00"+`nb`+".csv"
+            try:
+                data = ac.readGCDCFormat(datadir)
+                data = preprocessGCDC(data)
+                #data.plot()
+                try:
+                    data = filterRun3(data,True);
+                    data.plot()
+                except:
+                    print("failed")
+            except:
+                continue
         
     pylab.show()
-        
-    
-#     subjects = ["Ann","Annick","Emmy"]
-#     subjects = ["Example","Floor","Hanne"]
-#     subjects = ["Jolien","Laura","Mara"]
-#     subjects = ["Nina","Sofie","Tina","Vreni"]
-#     subjects = ["Tinne","Vreni","Yllia"]
-#     subjects = ["Annick"]
-#     plaats = "enkel"
-#     j=0
-#     
-#     for subject in subjects : 
-#         fdir = "..\data\Runs\\"+ subject + "\enkel\\"
-#         for i in range(len(os.listdir(fdir))):
-#             j+=1
-#             datadir = fdir + "DATA-00"+str(i+1) + ".csv"
-#             data = ac.readGCDCFormat(datadir)
-#             data = preprocessGCDC(data)
-#             #data.plot()
-#             try:
-#                 data = filterRun3(data);
-#                 data.plot()
-#             except:
-#                 print(`j`+" "+subject + `i`)
-#                 data.plot()
-#                 continue
-#          
-#     pylab.show()
-# 
