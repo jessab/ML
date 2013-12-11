@@ -77,7 +77,7 @@ def getFeatures(path,name,nb,features,existing):
         existing = literal_eval(existing)
         existing.update(f)
         f=existing
-        print(f)
+    print(f)
     return str(f)
     
 
