@@ -31,12 +31,12 @@ def extractBodyPart(data, bodyPart, requiredFeatures=None):
     
     return features
 
-def extract(anckleData,hipData,requiredFeatures=None):
-    requiredFeatures = checkRequiredFeatures(requiredFeatures,{'anckle':None,'hip':None})
+def extract(ankleData,hipData,requiredFeatures=None):
+    requiredFeatures = checkRequiredFeatures(requiredFeatures,{'ankle':None,'hip':None})
     
     features = dict()
     
-    features.update(extractBodyPart(anckleData, 'anckle', requiredFeatures['anckle']))
+    features.update(extractBodyPart(ankleData, 'ankle', requiredFeatures['ankle']))
     features.update(extractBodyPart(hipData, 'hip', requiredFeatures['hip']))
     
     return features
@@ -62,6 +62,6 @@ def getAllFeatures():
         }
     
     return {
-        'anckle':part,
+        'ankle':part,
         'hip':part   
         }

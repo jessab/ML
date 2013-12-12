@@ -48,10 +48,10 @@ def getFeatures(path,name,nb,features,existing):
         except:
             return None
     
-    def obtainFeatures(anckleData,hipData,features) :
+    def obtainFeatures(ankleData,hipData,features) :
         
         try:
-            return fa.extract(anckleData, hipData, features)
+            return fa.extract(ankleData, hipData, features)
         except:
             return None
         
@@ -65,10 +65,10 @@ def getFeatures(path,name,nb,features,existing):
     print(nb)
 
     
-    anckleData = getDataForOneBodyPart(path, name, nb, False)
+    ankleData = getDataForOneBodyPart(path, name, nb, False)
     hipData = getDataForOneBodyPart(path, name, nb, True)
     
-    f = obtainFeatures(anckleData, hipData, features)
+    f = obtainFeatures(ankleData, hipData, features)
     
     if f is None:
         print('no features')
@@ -118,11 +118,12 @@ def cleanData(data):
             return float(val.strip())
         
     def ynToTF(val):
-        if type(val)!=bool:
-            if "y" in val:
-                return True
-            else:
-                return False
+        if type(val)==bool:
+            return val
+        if "y" in val:
+            return True
+        else:
+            return False
         
     data = data[data.apply(lambda x: x['Features'] is not None, axis=1)]
     data['Sec'] = data.apply(lambda x : questionMarkToNaN(x['Sec']) ,axis=1)
@@ -173,8 +174,8 @@ def getData(path, requiredFeatures, useExisting):
 if __name__ == '__main__':
     from features.featuresToRequiredDict import featuresToRequiredDict
     path = "..\..\\verySmalldataSet\\"
-    f = ['hip.Ax.min', 'hip.Vx.av','anckle.simple_sg_ncor.maxDist','anckle.cwt_butter_cor.maxDist', 'head.fout.ief']
-#     f = ['anckle.Ax.min', 'anckle.Vx.av','hip.simple_nosmooth.maxDist','hip.cwt_butter_cor.maxDist', 'head.fout.ief']
+    f = ['hip.Ax.min', 'hip.Vx.av','ankle.simple_sg_ncor.maxDist','ankle.cwt_butter_cor.maxDist', 'head.fout.ief']
+#     f = ['ankle.Ax.min', 'ankle.Vx.av','hip.simple_nosmooth.maxDist','hip.cwt_butter_cor.maxDist', 'head.fout.ief']
     requiredFeatures = featuresToRequiredDict(f)
     print(requiredFeatures)
     data = getData(path, requiredFeatures, False)

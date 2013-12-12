@@ -49,7 +49,7 @@ if __name__ == '__main__':
     print(union(l1,l2))
     print(union([1,2,3],[3,4,5]))
     
-    features1 = ['hip.Ax.min', 'anckle.AyAz.fcovar','hip.Vx.av','anckle.simple_nosmooth.maxDist','hip.cwt_butter_ncor.avPeak','anckle.cwt_butter_cor.maxDist', 'head.fout.ief']
+    features1 = ['hip.Ax.min', 'ankle.AyAz.fcovar','hip.Vx.av','ankle.simple_nosmooth.maxDist','hip.cwt_butter_ncor.avPeak','ankle.cwt_butter_cor.maxDist', 'head.fout.ief']
     dict1 = featuresToRequiredDict(features1)
     features2 = []
     dict2 = featuresToRequiredDict(features2)
