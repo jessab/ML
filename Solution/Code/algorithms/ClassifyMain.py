@@ -7,43 +7,48 @@ import Classifier as cl
 import sys
 import app.featuresMain as fm
 import pylab
+import warnings
+warnings.filterwarnings("ignore")
 
 def main(path=""):
     if (path):
         data = fm.main(True,path)
     else:
         data = fm.main()
-#     print("\nSVM: trained/not trained\n")
-#     evalSVM(data, True,False)
-#     print("\nSVM: surface\n")
-#     evalSVM(data, False,True)
-#     print("\nSVM: trained-surface\n")
-#     evalSVM(data, True,True)
-#     print("\nDT: trained/not trained\n")
-#     evalDT(data, True,False)
+    print("\nSVM: trained/not trained\n")
+    evalSVM(data, True,False)
+    print("\nSVM: surface\n")
+    evalSVM(data, False,True)
+    print("\nSVM: trained-surface\n")
+    evalSVM(data, True,True)
+    pylab.show()
+    print("\nDT: trained/not trained\n")
+    evalDT(data, True,False)
     print("\nDT: surface\n")
     evalDT(data, False,True)
-#     print("\nDT: trained-surface\n")
-#     evalDT(data, True,True)
-#     print("\nKNN: trained/not trained\n")
-#     evalKNN(data, True,False)
-#     print("\nKNN: surface\n")
-#     evalKNN(data, False,True)
-#     print("\nKNN: trained-surface\n")
-#     evalKNN(data, True,True)
-#     print("\nLR: trained/not trained\n")
-#     evalLR(data, True,False)
-#     print("\nLR: surface\n")
-#     evalLR(data, False,True)
-#     print("\nLR: trained-surface\n")
-#     evalLR(data, True,True)
-    
+    print("\nDT: trained-surface\n")
+    evalDT(data, True,True)
+    pylab.show()
+    print("\nKNN: trained/not trained\n")
+    evalKNN(data, True,False)
+    print("\nKNN: surface\n")
+    evalKNN(data, False,True)
+    print("\nKNN: trained-surface\n")
+    evalKNN(data, True,True)
+    pylab.show()
+    print("\nLR: trained/not trained\n")
+    evalLR(data, True,False)
+    print("\nLR: surface\n")
+    evalLR(data, False,True)
+    print("\nLR: trained-surface\n")
+    evalLR(data, True,True)
     pylab.show()
 
 def evalSVM(data, classifyTrained, classifySurface):
     classifier = cl.classifyDataSVM(data, classifyTrained, classifySurface)
     classifier.crossValidation()
-    classifier.showProperties()
+#     classifier.showProperties()
+#     classifier.plotDecisionSurface()
 #     classifier.showSupportVectors()
 #     classifier.showSelectedFeatures()
     
@@ -52,15 +57,18 @@ def evalDT(data, classifyTrained, classifySurface):
     classifier.crossValidation()
 #     classifier.showFeatureImportances()
     classifier.createTreePdf()
+#     classifier.plotDecisionSurface()
     
 def evalKNN(data, classifyTrained, classifySurface):
     classifier = cl.classifyDataKNN(data, classifyTrained, classifySurface)
     classifier.crossValidation()
-    classifier.showKNeighborsGraph()
+#     classifier.showKNeighborsGraph()
+#     classifier.plotDecisionSurface()
     
 def evalLR(data, classifyTrained, classifySurface):
     classifier = cl.classifyDataLR(data, classifyTrained, classifySurface)
     classifier.crossValidation()
+#     classifier.plotDecisionSurface()
     
 def predict(data, samples, classifier='LogReg', classification='combined'):
     """

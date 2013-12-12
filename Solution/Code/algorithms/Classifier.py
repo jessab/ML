@@ -3,6 +3,11 @@ Created on 5-dec.-2013
 
 @author: Koen
 '''
+import warnings
+
+with warnings.catch_warnings():
+    warnings.filterwarnings("ignore",category=DeprecationWarning)
+
 from sklearn import svm, cross_validation, tree, datasets
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.externals.six import StringIO  
@@ -31,13 +36,26 @@ def extractData(data):
     samples = pp.scale(samples, with_mean=False)
     featureNames = vec.get_feature_names()
     return [samples,featureNames]
-    
-def selectFeatures(samples,classifications,featureNames,nbFeatures=10):
+
+def selectKBestFeatures(samples,classifications,featureNames,nbFeatures=10):
     fs = SelectKBest(k=nbFeatures)
-#     fs = RFECV(classifierClass.getEstimator())
     samples = fs.fit_transform(samples, classifications)
     sup = fs.get_support()
-    featureNames = [fn for (i,fn) in enumerate(featureNames) if sup[i]]
+    
+    featureNames = [featureNames[i] for (i,s) in enumerate(sup) if s]
+    return [samples,featureNames]
+
+def selectBestFeaturesRFECV(samples,classifications,featureNames,classifierClass):
+    fs = RFECV(classifierClass.getEstimator())
+    samples = fs.fit_transform(samples, classifications)
+    sup = fs.get_support()
+    
+    featureNames = [featureNames[i] for (i,s) in enumerate(sup) if s]
+    return [samples,featureNames]
+
+def selectFeatures(samples,classifications,featureNames,classifierClass,nbFeatures=10):
+#     [samples,featureNames] = selectBestFeaturesRFECV(samples, classifications, featureNames, classifierClass)
+    [samples,featureNames] = selectKBestFeatures(samples, classifications, featureNames, nbFeatures)
     return [samples,featureNames]
     
 def selectClassifications(data,classifyTrained,classifySurface):
@@ -62,9 +80,8 @@ def classifyData(data, classifyTrained, classifySurface, classifierClass, featur
     [classifications, classNames] = selectClassifications(data, classifyTrained, classifySurface)
     
     if (featuresSelect):
-        [samples,featureNames] = selectFeatures(samples, classifications, featureNames)
+        [samples,featureNames] = selectFeatures(samples, classifications, featureNames,classifierClass)
     classifier = classifierClass(samples,featureNames,classifications,classNames)
-    
     
     return classifier
 
@@ -127,33 +144,44 @@ class Classifier(object):
         raise NotImplementedError("Subclass must implement abstract method")
     
     def plotDecisionSurface(self):
-        prevSamples = self.samples
-        prevFeatureNames = self.featureNames
-        [self.samples,self.featureNames] = selectFeatures(self.samples, self.classifications, self.featureNames,2)
-        self.fit()
+        classifierClass = self.__class__
+        [samples,featureNames] = selectFeatures(self.samples, self.classifications, self.featureNames,classifierClass,2)
+        clf = classifierClass(samples,featureNames,self.classifications,self.classNames)
         
-        X = self.samples
+        X = samples
+        if (type(X) == np.ndarray):
+            X = np.matrix(self.samples)
         Y = self.classifications
-        h=0.2
+        h=0.01
         
         x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
         y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
         xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
                      np.arange(y_min, y_max, h))
         
-        Z = self.getClf().predict(np.c_[xx.ravel(), yy.ravel()])
+        Z = clf.getClf().predict(np.c_[xx.ravel(), yy.ravel()])
         
         Z = Z.reshape(xx.shape)
-        pl.contourf(xx, yy, Z, cmap=pl.cm.Paired)
+        
+        ttl = self.classifierName() + "  " +self.featureNames[0] + " - " + self.featureNames[1]
+        
+        colors = pl.cm.Paired
+        
+        fig = pl.figure()
+        ax = fig.add_subplot(111, title=ttl)
+        ax.contourf(xx, yy, Z, cmap=colors)
         pl.axis('off')
         
-        # Plot also the training points
-        pl.scatter(X[:, 0], X[:, 1], c=Y, cmap=pl.cm.Paired)
-        pl.title(self.classifierName() + "  " +self.featureNames[0] + " - " + self.featureNames[1])
+        xas = np.asarray(X[:, 0])
+        xas = [xas[()][i,0] for i in range(xas[()].shape[0])]
+        yas = np.asarray(X[:, 1])
+        yas = [yas[()][i,0] for i in range(yas[()].shape[0])]
+        ax.scatter(xas, yas, c=Y, cmap=colors)
         
-        self.samples = prevSamples
-        self.featureNames = prevFeatureNames
         self.fit()
+        
+    def classifierName(self):
+        return "undefined"
         
     
 class SVMClassifier(Classifier):
@@ -189,6 +217,9 @@ class SVMClassifier(Classifier):
     def getEstimator():
         return svm.SVR(kernel='linear')
     
+    def classifierName(self):
+        return "SVM"
+    
 class DTClassifier(Classifier):
     
     def __init__(self, samples, featureNames, classifications, classificationNames):
@@ -220,6 +251,9 @@ class DTClassifier(Classifier):
     def getEstimator():
         return tree.DecisionTreeRegressor()
     
+    def classifierName(self):
+        return "DT"
+    
 class KNNClassifier(Classifier):
     def __init__(self, samples, featureNames, classifications, classificationNames, k=5):
         self.clf = KNeighborsClassifier(n_neighbors=k, weights='distance')
@@ -232,7 +266,12 @@ class KNNClassifier(Classifier):
         graph = self.getClf().kneighbors_graph(self.samples)
         graph = graph.todense()
         cmap = colors.ListedColormap(['white', 'black'])
-        pl.imshow(graph,cmap)
+        fig = pl.figure()
+        ax = fig.add_subplot(111, title="KNN: nearest neighbours graph")
+        ax.imshow(graph,cmap)
+        
+    def classifierName(self):
+        return "KNN"
         
 class LRClassifier(Classifier):
     def __init__(self, samples, featureNames, classifications, classificationNames):
@@ -242,10 +281,14 @@ class LRClassifier(Classifier):
     def getClf(self):
         return self.clf
     
+    def classifierName(self):
+        return "LogReg"
+    
 if __name__ == '__main__':
     iris = datasets.load_iris()
-    clf = LRClassifier(iris.data, ["sep len", "pet wdt", "sep len", "pet wdt"], iris.target)
+    clf = DTClassifier(iris.data, ["sep len", "pet wdt", "sep len", "pet wdt"], iris.target,["red","blue","green"])
     clf.crossValidation()
+#     clf.plotDecisionSurface()
 #     clf.createTreePdf()
 #     clf.showFeatureImportances()
 #     clf.showKNeighborsGraph()
