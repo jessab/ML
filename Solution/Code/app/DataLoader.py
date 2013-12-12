@@ -6,7 +6,7 @@ Created on 10-dec.-2013
 from ast import literal_eval
 import pandas as pd
 import pickle
-from tools.nestedDictTools import diff,union,isEmpty
+from tools.nestedDictTools import diff,union,isEmpty, colsFirstFeaturesSecond
 import features.FeatureExtraction as fa
 import dataTransform.accproc as ac
 import dataTransform.Preprocessing as pp
@@ -26,7 +26,7 @@ def getExistingFeatures(name):
     # look up existing features
     return pickle.load(pfile)
 
-def getFeatures(path,name,nb,features,existing):
+def getFeatures(path,name,nb,required,existing,existingVals):
     def getRawData(path,name,nb,hip) :
         def getDir(path, subject, bodyPart, nb):
             return path + subject + "\\" + bodyPart + "\\" + "DATA-00"+str(int(nb)) + ".csv"
@@ -68,27 +68,50 @@ def getFeatures(path,name,nb,features,existing):
     ankleData = getDataForOneBodyPart(path, name, nb, False)
     hipData = getDataForOneBodyPart(path, name, nb, True)
     
-    f = obtainFeatures(ankleData, hipData, features)
+    if existing is None:
+        f = obtainFeatures(ankleData,hipData,required)
+        if f is None:
+            print('no features')
+            return None
+        return str(f)
+        
     
-    if f is None:
+    
+    
+    missingFeatures = diff(required,existing)
+    
+    # obtain features for existing cols and new features
+    newFeaturesForOldCols = colsFirstFeaturesSecond(existing, missingFeatures)
+    f1 = obtainFeatures(ankleData,hipData,newFeaturesForOldCols)
+    
+    # obtain features for new cols and all features
+    featuresForNewCols = colsFirstFeaturesSecond(missingFeatures, union(missingFeatures,existing))
+    f2 = obtainFeatures(ankleData,hipData,featuresForNewCols)
+    
+    if f1 is not None:
+        f=f1
+        if f2 is not None:
+            f.update(f2)
+    elif f2 is not None:
+        f=f2
+    else:
         print('no features')
         return None
     
-    if existing is not None:
-        existing = literal_eval(existing)
-        existing.update(f)
-        f=existing
+    if existingVals is not None:
+        existingVals = literal_eval(existingVals)
+        existingVals.update(f)
+        f=existingVals
     return str(f)
     
 
-def updateFeatures(data, path, features):
-    data['Features']= data.apply(lambda row : getFeatures(path, row['Name'],row['Nb'],features,row['Features']),axis=1)
+def updateFeatures(data, path, features,existingFeatures=None):
+    if existingFeatures is None:
+        data['Features']=data.apply(lambda row : getFeatures(path, row['Name'],row['Nb'],features,None,None),axis=1)
+    else:
+        data['Features']= data.apply(lambda row : getFeatures(path, row['Name'],row['Nb'],features,existingFeatures, row['Features']),axis=1)
     return data
 
-def setFeatures(data,path,features):
-    
-    data['Features']=data.apply(lambda row : getFeatures(path, row['Name'],row['Nb'],features,None),axis=1)
-    return data
 
 def loadNewData(path):
     filename = path + "metadata.csv"
@@ -137,10 +160,10 @@ def getDataExisting(path, requiredFeatures):
     name = getName(path)
     data = loadExistingData(name)
     existingFeatures = getExistingFeatures(name)
-    mFeatures =  diff(requiredFeatures,existingFeatures)
-    if isEmpty(mFeatures):
+#     mFeatures =  diff(requiredFeatures,existingFeatures)
+    if isEmpty(diff(requiredFeatures,existingFeatures)):
         return data
-    data = updateFeatures(data,path,mFeatures)
+    data = updateFeatures(data,path,requiredFeatures,existingFeatures)
     data = cleanData(data)
     storeData(data,name)
     storePickle(union(requiredFeatures,existingFeatures), name)
@@ -149,7 +172,7 @@ def getDataExisting(path, requiredFeatures):
 def getDataNotExisting(path, requiredFeatures):
     name = getName(path)
     data = loadNewData(path)
-    data = setFeatures(data,path,requiredFeatures)
+    data = updateFeatures(data,path,requiredFeatures)
     data = cleanData(data)
     storeData(data,name)
     storePickle(requiredFeatures,name)

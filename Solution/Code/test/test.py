@@ -89,7 +89,11 @@ def getFeatures(path,name,nb) :
     return features
 
 if __name__ == '__main__':
-    datadir = "..\..\Runs\Ann\enkel\DATA-001.csv"
-    data = ac.readGCDCFormat(datadir)
-    print(data)
-    
+    import pickle
+    alle = {'ankle': {'freq': {'cols': ['Ax', 'Ay', 'Az', 'Atotal'], 'features': ['fcovar', 'MF', 'F']}, 'vel': {'cols': ['Vx', 'Vy', 'Vz'], 'features': ['covar', 'max', 'min', 'median', 'av']}, 'peak': {'cols': [('simple', None), ('cwt', None), ('simple', 'hilbert', True), ('simple', 'hilbert', False), ('simple', 'sg', True), ('simple', 'sg', False), ('simple', 'butter', True), ('simple', 'butter', False), ('cwt', 'hilbert', True), ('cwt', 'hilbert', False), ('cwt', 'sg', True), ('cwt', 'sg', False), ('cwt', 'butter', True), ('cwt', 'butter', False)], 'features': ['varDist', 'maxDist', 'avDist', 'varPeak', 'avPeak', 'minDist', 'maxPeak', 'minPeak']}, 'time': {'cols': ['Ax', 'Ay', 'Az', 'Atotal'], 'features': ['covar', 'max', 'min', 'median', 'av']}}, 'hip': {'freq': {'cols': ['Ax', 'Ay', 'Az', 'Atotal'], 'features': ['fcovar', 'MF', 'F']}, 'vel': {'cols': ['Vx', 'Vy', 'Vz'], 'features': ['covar', 'max', 'min', 'median', 'av']}, 'peak': {'cols': [('simple', None), ('cwt', None), ('simple', 'hilbert', True), ('simple', 'hilbert', False), ('simple', 'sg', True), ('simple', 'sg', False), ('simple', 'butter', True), ('simple', 'butter', False), ('cwt', 'hilbert', True), ('cwt', 'hilbert', False), ('cwt', 'sg', True), ('cwt', 'sg', False), ('cwt', 'butter', True), ('cwt', 'butter', False)], 'features': ['varDist', 'maxDist', 'avDist', 'varPeak', 'avPeak', 'minDist', 'maxPeak', 'minPeak']}, 'time': {'cols': ['Ax', 'Ay', 'Az', 'Atotal'], 'features': ['covar', 'max', 'min', 'median', 'av']}}}
+    print(alle)
+    print(type(alle))
+    path = "..\data\\"
+    name = ".._.._Runs_"
+    f = file(path+name, "w")
+    pickle.dump(alle, f)

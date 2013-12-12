@@ -20,6 +20,8 @@ def diff(v1,v2):
     except:
         return [l for l in v1 if l not in v2]
     
+      
+
 #### union ####
 
 # return everything from v1 which is not in v2
@@ -38,6 +40,18 @@ def isEmpty(d):
     except:
         return len(d)==0
     
+#### exchange features and cols ###
+
+def colsFirstFeaturesSecond(v1,v2):
+    v3=dict()
+    for bodypart in v1.keys():
+        v3[bodypart]=dict()
+        for cat in v1[bodypart].keys():
+            v3[bodypart][cat]={
+                                'cols':v1[bodypart][cat]['cols'],
+                                'features':v2[bodypart][cat]['features']
+                               }
+    return v3
     
     
 if __name__ == '__main__':
@@ -56,6 +70,6 @@ if __name__ == '__main__':
     
     print(dict1)
     print(dict2)
-    print(isEmpty(dict1))
-    print(isEmpty(dict2))
+    ex1 = colsFirstFeaturesSecond(dict1, dict2)
+    print(ex1)
     
