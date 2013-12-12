@@ -1,4 +1,4 @@
 ;Name;Nb;Trained;Surface;Sec;Features
-0;Tina;1;; Woodchip;4.22;{'hip.simple_notSmooth.maxDist': None, 'hip.Ax.min': -8.5920004319716465, 'anckle.cwt_butter_cor.maxDist': None, 'anckle.simple_notSmooth.maxDist': None, 'anckle.Vx.av': 0.020757968915037162, 'anckle.Ax.min': -4.033607856973923, 'hip.Vx.av': -0.0397784925382643, 'hip.cwt_butter_cor.maxDist': None}
-1;Tina;3;; Asphalt;3.78;{'hip.simple_notSmooth.maxDist': None, 'hip.Ax.min': -0.53072022287486653, 'anckle.cwt_butter_cor.maxDist': None, 'anckle.simple_notSmooth.maxDist': None, 'anckle.Vx.av': 0.010113279075957476, 'anckle.Ax.min': -4.758395050578034, 'hip.Vx.av': -0.0017158972272153122, 'hip.cwt_butter_cor.maxDist': None}
-2;Tina;6;; Track;3.42;{'hip.simple_notSmooth.maxDist': None, 'hip.Ax.min': -0.50062845103610276, 'anckle.cwt_butter_cor.maxDist': None, 'anckle.simple_notSmooth.maxDist': None, 'anckle.Vx.av': 0.026377746780551735, 'anckle.Ax.min': -5.562723799637862, 'hip.Vx.av': -0.0045579087317036016, 'hip.cwt_butter_cor.maxDist': None}
+0;Tina;1;False; Woodchip;4.22;{'anckle.simple_sg_ncor.maxDist': None, 'anckle.cwt_butter_cor.maxDist': None, 'hip.Ax.min': -8.5920004319716465, 'hip.Vx.av': -0.0397784925382643}
+1;Tina;3;False; Asphalt;3.78;{'anckle.simple_sg_ncor.maxDist': None, 'anckle.cwt_butter_cor.maxDist': None, 'hip.Ax.min': -0.53072022287486653, 'hip.Vx.av': -0.0017158972272153122}
+2;Tina;6;False; Track;3.42;{'anckle.simple_sg_ncor.maxDist': None, 'anckle.cwt_butter_cor.maxDist': None, 'hip.Ax.min': -0.50062845103610276, 'hip.Vx.av': -0.0045579087317036016}
