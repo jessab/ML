@@ -10,6 +10,7 @@ from tools.nestedDictTools import diff,union
 import features.FeatureExtraction as fa
 import dataTransform.accproc as ac
 import dataTransform.Preprocessing as pp
+import pylab
 
 def getDataPath():
     return "..\data\\"
@@ -177,3 +178,4 @@ if __name__ == '__main__':
     print(requiredFeatures)
     data = getData(path, requiredFeatures, False)
     print (data)
+    pylab.show()

@@ -4,6 +4,8 @@ Created on 6-dec.-2013
 @author: jessa
 '''
 import numpy as np
+import pylab
+
 try:
     from dataTransform.accproc import detectPeaksGCDC
 except:
@@ -23,7 +25,7 @@ def peakTupToStr(tup):
         
     return name
         
-def genPeaks(tup):
+def genPeaks(data,tup):
     
     detType,smoothType,smoothCor = tup
     if smoothType is None :
@@ -48,8 +50,9 @@ def toPeaks(data, peakTups) :
         name = peakTupToStr(tup)
     
         try:
-            peaks[name]=genPeaks(tup)
-        except:
+            peaks[name]=genPeaks(data,tup)
+        except Exception as ex:
+            print(ex)
             print(name)
             peaks[name]=None
             continue
@@ -131,4 +134,5 @@ if __name__ == '__main__':
             data = ac.readGCDCFormat("..\..\Runs\Tina\enkel\DATA-00" + `nb` + ".csv")
             data = ac.preprocessGCDC(data)
             filtered = pp.filterRun3(data,False)
+
             print(getSimplePeakFeatures(data))
