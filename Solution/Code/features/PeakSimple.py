@@ -116,7 +116,6 @@ def getSimplePeakFeatures(data, requiredFeatures=None):
         requiredFeatures = generatedFeatures
     generatedFeatures.update(requiredFeatures)
     
-    data.plot()
     peaks = toPeaks(data,generatedFeatures['cols'])
     
     features = dict()
@@ -135,5 +134,5 @@ if __name__ == '__main__':
             data = ac.readGCDCFormat("..\..\Runs\Tina\enkel\DATA-00" + `nb` + ".csv")
             data = ac.preprocessGCDC(data)
             filtered = pp.filterRun3(data,False)
-            print(getSimplePeakFeatures(filtered))
-            pylab.show()
+
+            print(getSimplePeakFeatures(data))
