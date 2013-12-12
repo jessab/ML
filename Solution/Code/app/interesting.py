@@ -6,7 +6,6 @@ Created on 8-dec.-2013
 
 import matplotlib.pyplot as plt
 import tools.Tools as tls
-from sklearn.feature_extraction import DictVectorizer
 
 
 
@@ -15,11 +14,36 @@ def failingPeaks(path):
     
     data = getData(path, None, True)
     
-    features = tls.getDictArray(data.Features)
-    vec = DictVectorizer()
-    samples = vec.fit_transform(features)
+    samples = tls.getDictArray(data.Features)
     
-    print(samples)
+    people = dict()
+    peaks = dict()
+    
+    i=0
+    for sample in samples:
+        for f in sample.keys():
+            countedPeaks = []
+            if sample[f] is None:
+                peak =  f.split('.')[1]
+                countedPeaks+=peak
+                if `i` in people:
+                    people[`i`]+=1
+                else:
+                    people[`i`]=1
+                    
+                if f in peaks:
+                    peaks[peak]+=1
+                else:
+                    peaks[peak]=1
+        i+=1
+                    
+    print(people)
+    print(peaks)
+    print(len(people))
+    print(len(peaks))
+                
+            
+                    
 
 
 
