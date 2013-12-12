@@ -6,7 +6,7 @@ Created on 10-dec.-2013
 from ast import literal_eval
 import pandas as pd
 import pickle
-from tools.nestedDictTools import diff,union
+from tools.nestedDictTools import diff,union,isEmpty
 import features.FeatureExtraction as fa
 import dataTransform.accproc as ac
 import dataTransform.Preprocessing as pp
@@ -78,7 +78,6 @@ def getFeatures(path,name,nb,features,existing):
         existing = literal_eval(existing)
         existing.update(f)
         f=existing
-    print(f)
     return str(f)
     
 
@@ -138,6 +137,8 @@ def getDataExisting(path, requiredFeatures):
     data = loadExistingData(name)
     existingFeatures = getExistingFeatures(name)
     mFeatures =  diff(requiredFeatures,existingFeatures)
+    if isEmpty(mFeatures):
+        return data
     data = updateFeatures(data,path,mFeatures)
     data = cleanData(data)
     storeData(data,name)

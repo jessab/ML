@@ -30,6 +30,13 @@ def union(v1,v2):
         return v1+[l for l in v2 if l not in v1]
     
     
+#### empty ####
+
+def isEmpty(d):
+    try:
+        return False not in (dict((k,isEmpty(d[k])) for k in d)).values()
+    except:
+        return len(d)==0
     
     
     
@@ -44,10 +51,11 @@ if __name__ == '__main__':
     
     features1 = ['hip.Ax.min', 'anckle.AyAz.fcovar','hip.Vx.av','anckle.simple_nosmooth.maxDist','hip.cwt_butter_ncor.avPeak','anckle.cwt_butter_cor.maxDist', 'head.fout.ief']
     dict1 = featuresToRequiredDict(features1)
-    features2 = ['hip.Ax.max', 'anckle.AxAz.fcovar','hip.Vx.min','anckle.cwt_nosmooth.maxDist','hip.cwt_butter_ncor.avPeak','anckle.cwt_butter_ncor.maxDist', 'head.fout.ief']
+    features2 = []
     dict2 = featuresToRequiredDict(features2)
     
     print(dict1)
     print(dict2)
-    print(union(dict1,dict2))
+    print(isEmpty(dict1))
+    print(isEmpty(dict2))
     

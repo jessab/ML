@@ -5,6 +5,31 @@ Created on 8-dec.-2013
 '''
 
 import matplotlib.pyplot as plt
+import tools.Tools as tls
+from sklearn.feature_extraction import DictVectorizer
+
+
+
+def failingPeaks(path):
+    from DataLoader import getData
+    
+    data = getData(path, None, True)
+    
+    features = tls.getDictArray(data.Features)
+    vec = DictVectorizer()
+    samples = vec.fit_transform(features)
+    
+    print(samples)
+
+
+
+
+
+
+
+
+
+
 
 def peakInfluenceTrained(peaksType):
     from tools.Tools import getDictArray
@@ -70,7 +95,5 @@ def peakInfluenceSurface(peaksType):
     plot('avDist')
     
 if __name__ == '__main__':
-    peakInfluenceSurface('cwtDef')
-    peakInfluenceTrained('cwtDef')
-    
-    plt.show()
+    path = "..\..\Runs\\"
+    failingPeaks(path)
