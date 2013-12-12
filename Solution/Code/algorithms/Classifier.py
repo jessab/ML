@@ -155,6 +155,8 @@ class Classifier(object):
         self.featureNames = prevFeatureNames
         self.fit()
         
+        pl.show()
+        
     
 class SVMClassifier(Classifier):
     
@@ -244,8 +246,9 @@ class LRClassifier(Classifier):
     
 if __name__ == '__main__':
     iris = datasets.load_iris()
-    clf = LRClassifier(iris.data, ["sep len", "pet wdt", "sep len", "pet wdt"], iris.target)
+    clf = LRClassifier(iris.data, ["sep len", "pet wdt", "sep len", "pet wdt"], iris.target,[])
     clf.crossValidation()
+    pl.show()
 #     clf.createTreePdf()
 #     clf.showFeatureImportances()
 #     clf.showKNeighborsGraph()

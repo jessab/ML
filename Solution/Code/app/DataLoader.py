@@ -179,4 +179,3 @@ if __name__ == '__main__':
     print(requiredFeatures)
     data = getData(path, requiredFeatures, False)
     print (data)
-    pylab.show()
