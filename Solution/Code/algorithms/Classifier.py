@@ -13,7 +13,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.externals.six import StringIO  
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.feature_selection import SelectKBest, RFECV
+from sklearn.feature_selection import SelectKBest, RFECV, f_classif
 from sklearn import preprocessing as pp
 import pylab as pl
 from matplotlib import colors
@@ -38,7 +38,7 @@ def extractData(data):
     return [samples,featureNames]
 
 def selectKBestFeatures(samples,classifications,featureNames,nbFeatures=10):
-    fs = SelectKBest(k=nbFeatures)
+    fs = SelectKBest(f_classif,k=nbFeatures)
     samples = fs.fit_transform(samples, classifications)
     sup = fs.get_support()
     
@@ -47,7 +47,7 @@ def selectKBestFeatures(samples,classifications,featureNames,nbFeatures=10):
 
 def selectBestFeaturesRFECV(samples,classifications,featureNames,classifierClass):
     fs = RFECV(classifierClass.getEstimator())
-    samples = fs.fit_transform(samples, classifications)
+    samples = fs.fit_transform(samples.toarray(), classifications)
     sup = fs.get_support()
     
     featureNames = [featureNames[i] for (i,s) in enumerate(sup) if s]
@@ -85,17 +85,17 @@ def classifyData(data, classifyTrained, classifySurface, classifierClass, featur
     
     return classifier
 
-def classifyDataDT(data, classifyTrained, classifySurface):
-    return classifyData(data, classifyTrained, classifySurface, DTClassifier,True)
+def classifyDataDT(data, classifyTrained, classifySurface,selectFeatures=False):
+    return classifyData(data, classifyTrained, classifySurface, DTClassifier,selectFeatures)
 
-def classifyDataSVM(data, classifyTrained, classifySurface):
-    return classifyData(data, classifyTrained, classifySurface, SVMClassifier,False)
+def classifyDataSVM(data, classifyTrained, classifySurface,selectFeatures=False):
+    return classifyData(data, classifyTrained, classifySurface, SVMClassifier,selectFeatures)
 
-def classifyDataKNN(data,classifyTrained, classifySurface):
-    return classifyData(data, classifyTrained, classifySurface, KNNClassifier,False)
+def classifyDataKNN(data,classifyTrained, classifySurface,selectFeatures=False):
+    return classifyData(data, classifyTrained, classifySurface, KNNClassifier,selectFeatures)
 
-def classifyDataLR(data,classifyTrained, classifySurface):
-    return classifyData(data, classifyTrained, classifySurface, LRClassifier,False)
+def classifyDataLR(data,classifyTrained, classifySurface,selectFeatures=False):
+    return classifyData(data, classifyTrained, classifySurface, LRClassifier,selectFeatures)
 
 class Classifier(object):
     '''
@@ -129,7 +129,7 @@ class Classifier(object):
         
     def crossValidation(self):
         scores = cross_validation.cross_val_score(self.getClf(), self.getSamples(), self.getClassifications())
-        print("Accuracy: \n mean:%f \n std:%f\n" % (scores.mean(), scores.std()))
+        print("Accuracy: \n mean:%f \n std:%f" % (scores.mean(), scores.std()))
         
     def showSelectedFeatures(self):
         print("Selected features:")
@@ -149,34 +149,30 @@ class Classifier(object):
         clf = classifierClass(samples,featureNames,self.classifications,self.classNames)
         
         X = samples
-        if (type(X) == np.ndarray):
-            X = np.matrix(self.samples)
+        if (type(X) != np.ndarray):
+            X = X.toarray()
         Y = self.classifications
         h=0.01
         
-        x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
-        y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-        xx, yy = np.meshgrid(np.arange(x_min, x_max, h),
-                     np.arange(y_min, y_max, h))
+        xas = X[:, 0]
+        yas = X[:, 1]
+
+        x_min, x_max = min(xas) - 1, max(xas) + 1
+        y_min, y_max = min(yas) - 1, max(yas) + 1
+        xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
         
         Z = clf.getClf().predict(np.c_[xx.ravel(), yy.ravel()])
         
         Z = Z.reshape(xx.shape)
         
-        ttl = self.classifierName() + "  " +self.featureNames[0] + " - " + self.featureNames[1]
+        ttl = self.classifierName() + "  " + featureNames[0] + " - " + featureNames[1]
         
-        colors = pl.cm.Paired
-        
+        cols = pl.cm.Paired
         fig = pl.figure()
         ax = fig.add_subplot(111, title=ttl)
-        ax.contourf(xx, yy, Z, cmap=colors)
-        pl.axis('off')
-        
-        xas = np.asarray(X[:, 0])
-        xas = [xas[()][i,0] for i in range(xas[()].shape[0])]
-        yas = np.asarray(X[:, 1])
-        yas = [yas[()][i,0] for i in range(yas[()].shape[0])]
-        ax.scatter(xas, yas, c=Y, cmap=colors)
+        ax.contourf(xx, yy, Z, cmap=cols)
+        ax.axis('off')
+        ax.scatter(xas, yas, c=Y, cmap=cols)
         
         self.fit()
         
@@ -215,7 +211,7 @@ class SVMClassifier(Classifier):
             
     @staticmethod     
     def getEstimator():
-        return svm.SVR(kernel='linear')
+        return svm.SVC(kernel='linear')
     
     def classifierName(self):
         return "SVM"
@@ -224,7 +220,8 @@ class DTClassifier(Classifier):
     
     def __init__(self, samples, featureNames, classifications, classificationNames):
         self.clf = tree.DecisionTreeClassifier(min_samples_split=4, max_depth=4)
-        samples = samples.toarray()
+        if (type(samples)!=np.ndarray):
+            samples = samples.toarray()
         Classifier.__init__(self, samples, featureNames, classifications, classificationNames)
         
     def getClf(self):
@@ -247,9 +244,6 @@ class DTClassifier(Classifier):
         graph = pydot.graph_from_dot_data(dot_data.getvalue()) 
         graph.write_pdf("tree.pdf") 
         
-    @staticmethod     
-    def getEstimator():
-        return tree.DecisionTreeRegressor()
     
     def classifierName(self):
         return "DT"
@@ -286,11 +280,9 @@ class LRClassifier(Classifier):
     
 if __name__ == '__main__':
     iris = datasets.load_iris()
-    clf = DTClassifier(iris.data, ["sep len", "pet wdt", "sep len", "pet wdt"], iris.target,["red","blue","green"])
+    clf = SVMClassifier(iris.data, ["sep len", "sep wdt", "pet len", "pet wdt"], iris.target,["Setosa", "Versicolour", "Virginica"])
     clf.crossValidation()
-#     clf.plotDecisionSurface()
-#     clf.createTreePdf()
-#     clf.showFeatureImportances()
-#     clf.showKNeighborsGraph()
+    clf.plotDecisionSurface()
+    pl.show()
     
     
