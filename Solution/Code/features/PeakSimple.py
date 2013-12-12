@@ -79,6 +79,10 @@ def maxDist(peaks):
 def minDist(peaks):
     x=peaks[0]
     return min(x[1:]-x[:-1]) 
+
+def medianDist(peaks):
+    x=peaks[0]
+    return np.median(x[1:]-x[:-1])
     
 def maxPeak(peaks):
     return max(peaks[1])
@@ -92,6 +96,9 @@ def avPeak(peaks):
 def varPeak(peaks):
     return np.var(peaks[1])
 
+def medianPeak(peaks):
+    return np.median(peaks[1])
+
 
 def posFeatures():
     return {
@@ -99,10 +106,12 @@ def posFeatures():
         'varDist': varDist,
         'minDist': minDist,
         'maxDist': maxDist,
+        'medianDist': medianDist,
         'avPeak' : avPeak,
         'varPeak': varPeak,
         'minPeak': minPeak,
-        'maxPeak': maxPeak
+        'maxPeak': maxPeak,
+        'medianPeak': medianPeak
     }
     
 def posPeaks():

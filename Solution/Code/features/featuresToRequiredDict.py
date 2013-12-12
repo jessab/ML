@@ -10,8 +10,8 @@ import FreqDomainSimple as fds
 import PeakSimple as ps
 
 def findBodyPart(bodyPart):
-    if 'anckle' in bodyPart:
-        return 'anckle'
+    if 'ankle' in bodyPart:
+        return 'ankle'
     if 'hip' in bodyPart:
         return 'hip'
 
@@ -82,7 +82,7 @@ def basicBodyDict():
         }
 def basicDict():
     return {
-        'anckle':basicBodyDict(),
+        'ankle':basicBodyDict(),
         'hip': basicBodyDict()
         }
 
@@ -97,5 +97,5 @@ def featuresToRequiredDict(requiredFeatures):
     
 
 if __name__ == '__main__':
-    features = ['hip.Ax.min', 'anckle.AyAz.fcovar','hip.Vx.av','anckle.simple_nosmooth.maxDist','hip.cwt_butter_ncor.avPeak','anckle.cwt_butter_cor.maxDist', 'head.fout.ief']
+    features = ['hip.Ax.min', 'ankle.AyAz.fcovar','hip.Vx.av','ankle.simple_nosmooth.maxDist','hip.cwt_butter_ncor.avPeak','ankle.cwt_butter_cor.maxDist', 'head.fout.ief']
     print(featuresToRequiredDict(features))

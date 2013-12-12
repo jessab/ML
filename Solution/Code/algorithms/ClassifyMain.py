@@ -51,6 +51,7 @@ def evalSVM(data, classifyTrained, classifySurface):
     classifier.plotDecisionSurface()
 #     classifier.showSupportVectors()
 #     classifier.showSelectedFeatures()
+    classifier.plotDecisionSurface()
     
 def evalDT(data, classifyTrained, classifySurface):
     classifier = cl.classifyDataDT(data, classifyTrained, classifySurface)

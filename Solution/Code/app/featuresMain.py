@@ -27,7 +27,6 @@ def main(useExisting=True, path="..\..\Runs\\",features=None):
     data = getData(path, features, useExisting)
     print(data.Features)
     print(data)
-    pylab.show()
     return data
     
  
@@ -38,7 +37,7 @@ if __name__ == '__main__':
         
     features= None
     dataPath = "..\..\Runs\\"
-    useExisting = False
+    useExisting = True
     
     nextV=None
     

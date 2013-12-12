@@ -179,6 +179,8 @@ class Classifier(object):
     def classifierName(self):
         return "undefined"
         
+        pl.show()
+        
     
 class SVMClassifier(Classifier):
     
@@ -281,7 +283,6 @@ class LRClassifier(Classifier):
 if __name__ == '__main__':
     iris = datasets.load_iris()
     clf = SVMClassifier(iris.data, ["sep len", "sep wdt", "pet len", "pet wdt"], iris.target,["Setosa", "Versicolour", "Virginica"])
-    clf.crossValidation()
     clf.plotDecisionSurface()
     pl.show()
     
