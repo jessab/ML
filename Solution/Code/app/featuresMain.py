@@ -8,6 +8,7 @@ from ast import literal_eval
 from features.featuresToRequiredDict import featuresToRequiredDict
 from app.DataLoader import getData
 import sys
+import pylab
 
 def checkPath(path):
     if path[-1]!="\\" :
@@ -26,6 +27,7 @@ def main(useExisting=True, path="..\..\Runs\\",features=None):
     data = getData(path, features, useExisting)
     print(data.Features)
     print(data)
+    pylab.show()
     return data
     
  

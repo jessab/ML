@@ -11,7 +11,6 @@ import Velocity as vs
 
 
 def checkRequiredFeatures(requiredFeatures,generatedFeatures):
-    generatedFeatures = {'time':None, 'freq': None, 'peak':None, 'vel':None}
     if requiredFeatures is None:
         requiredFeatures = generatedFeatures
     generatedFeatures.update(requiredFeatures)
