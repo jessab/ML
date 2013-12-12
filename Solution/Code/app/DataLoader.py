@@ -171,7 +171,7 @@ def getData(path, requiredFeatures, useExisting):
 if __name__ == '__main__':
     from features.featuresToRequiredDict import featuresToRequiredDict
     path = "..\..\\verySmalldataSet\\"
-    f = ['hip.Ax.min', 'hip.Vx.av','anckle.simple_nosmooth.maxDist','anckle.cwt_butter_cor.maxDist', 'head.fout.ief']
+    f = ['hip.Ax.min', 'hip.Vx.av','anckle.simple_sg_ncor.maxDist','anckle.cwt_butter_cor.maxDist', 'head.fout.ief']
 #     f = ['anckle.Ax.min', 'anckle.Vx.av','hip.simple_nosmooth.maxDist','hip.cwt_butter_cor.maxDist', 'head.fout.ief']
     requiredFeatures = featuresToRequiredDict(f)
     print(requiredFeatures)

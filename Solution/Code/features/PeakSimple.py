@@ -4,7 +4,10 @@ Created on 6-dec.-2013
 @author: jessa
 '''
 import numpy as np
-import dataTransform.accproc as ac
+try:
+    from dataTransform.accproc import detectPeaksGCDC
+except:
+    print('import failed')
 
 def peakTupToStr(tup):
     detType,smoothType,smoothCor = tup
@@ -21,12 +24,13 @@ def peakTupToStr(tup):
     return name
         
 def genPeaks(tup):
+    
     detType,smoothType,smoothCor = tup
     if smoothType is None :
-        val = ac.detectPeaksGCDC(data=data,detection={'type':detType})
+        val = detectPeaksGCDC(data,detection={'type':detType})
         val = np.transpose(val)
     else:
-        val = np.transpose(ac.detectPeaksGCDC(data,detection={'type':detType}, smooth={'type':smoothType, 'correct':smoothCor}))
+        val = np.transpose(detectPeaksGCDC(data,detection={'type':detType}, smooth={'type':smoothType, 'correct':smoothCor}))
     if len(val[0])<10:
         val=None
     return val
@@ -48,6 +52,7 @@ def toPeaks(data, peakTups) :
         except:
             print(name)
             peaks[name]=None
+            continue
         
     return peaks
 
