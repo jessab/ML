@@ -119,5 +119,5 @@ def peakInfluenceSurface(peaksType):
     plot('avDist')
     
 if __name__ == '__main__':
-    path = "..\..\Runs\\"
-    failingPeaks(path)
+    peakInfluenceSurface('ankle.cwt_hilbert_ncor')
+    plt.show()

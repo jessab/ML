@@ -39,6 +39,8 @@ def extractData(data):
     return [samples,featureNames]
 
 def selectKBestFeatures(samples,classifications,featureNames,nbFeatures=10):
+    if len(featureNames)<nbFeatures:
+        nbFeatures = len(featureNames)
     fs = SelectKBest(f_classif,k=nbFeatures)
     samples = fs.fit_transform(samples, classifications)
     sup = fs.get_support()
@@ -56,8 +58,18 @@ def selectBestFeaturesRFECV(samples,classifications,featureNames,classifierClass
     featureNames = [featureNames[i] for (i,s) in enumerate(sup) if s]
     return [samples,featureNames]
 
+def filterCorrelated(scores,corr,i):
+    if abs(corr)<0.5:
+        return 0
+    else:
+        return scores[i]
+    
 def selektKBestUncorrelatedFeatures(samples,classifications,featureNames,nbFeatures=10):
-    [samples,featureNames,scores] = selectKBestFeatures(samples, classifications, featureNames, nbFeatures)
+    k10 = 10*nbFeatures
+    [samples,featureNames,scores] = selectKBestFeatures(samples, classifications, featureNames, k10)
+    
+    if len(featureNames)<k10:
+        k10 = len(featureNames)
     
     isSparse = (type(samples)==csr_matrix)
     
@@ -66,22 +78,23 @@ def selektKBestUncorrelatedFeatures(samples,classifications,featureNames,nbFeatu
     
     corr = np.corrcoef(samples, rowvar=False)
     
-    sel = []    
-    pos = range(10*nbFeatures)
+    sel = []
+             
     
-    for i in range(nbFeatures):
-#         pos=[j for j in pos if j<=pos[i] or abs(corr[pos[i],j])<0.85]
+    for _ in range(nbFeatures):
+        if len([s for s in scores if s>0])==0:
+            break
         s = np.argmax(scores)
-        scores[s]=0
-        sel+=s
-        pos = [j for j in pos if j!=s and abs(corr[s,j])<0.85]
+        sel.append(s)
+        scores = map(lambda i : scores[i]*(corr[s,i]<0.2), range(k10))
+#         scores = map(lambda i : filterCorrelated(scores,corr[s,i],i), range(k10))
         
     samples = np.transpose(samples)
     samples = np.transpose([np.array(samples[j,:]).reshape(-1) for j in sel])
     if isSparse:
         samples = csr_matrix(samples)
     
-    featureNames = [featureNames[i] for i in pos[:nbFeatures]]
+    featureNames = [featureNames[i] for i in sel]
     
     return [samples,featureNames]
 

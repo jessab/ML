@@ -10,7 +10,7 @@ import pylab
 import warnings
 warnings.filterwarnings("ignore")
 
-selF = False
+selF = True
 
 def main(path=""):
     if (path):
