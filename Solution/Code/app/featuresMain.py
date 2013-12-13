@@ -5,57 +5,55 @@ Created on 5-dec.-2013
 '''
 
 from ast import literal_eval
-from features.featuresToRequiredDict import featuresToRequiredDict
-from app.DataLoader import getData
 import sys
-import pylab
+
+from DataLoader import getData
+from features.featuresToRequiredDict import featuresToRequiredDict
+
 
 def checkPath(path):
-    if path[-1]!="\\" :
-        path+="\\"
+    if path[-1] != "\\":
+        path += "\\"
     return path
 
 
-def main(useExisting=True, path="..\..\Runs\\",features=None):
-    path=checkPath(path)
+def main(useExisting=True, path="..\..\Runs\\", features=None):
+    path = checkPath(path)
 
     if features is not None:
         features = literal_eval(features)
-        if type(features)==list:
+        if type(features) == list:
             features = featuresToRequiredDict(features)
-    
+
     data = getData(path, features, useExisting)
     print(data.Features)
     print(data)
     return data
-    
- 
 
 
 if __name__ == '__main__':
     args = sys.argv
-        
-    features= None
+
+    features = None
     dataPath = "..\..\Runs\\"
     useExisting = True
-    
-    nextV=None
-    
+
+    nextV = None
+
     for i in range(len(args)):
         val = args[i]
-        if val=="datapath":
+        if val == "datapath":
             nextV = val
-        elif val=="useExisting":
+        elif val == "useExisting":
             nextV = val
-        elif val=="features":
+        elif val == "features":
             nextV = val
-            
-        elif nextV=="datapath":
-            dataPath=val
-        elif nextV=="useExisting":
-            useExisting=val
-        elif nextV=="features":
-            features=val
-            
-    main(useExisting,dataPath,features)
-    
+
+        elif nextV == "datapath":
+            dataPath = val
+        elif nextV == "useExisting":
+            useExisting = val
+        elif nextV == "features":
+            features = val
+
+    main(useExisting, dataPath, features)

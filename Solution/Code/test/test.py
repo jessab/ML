@@ -4,18 +4,21 @@ Created on 29-nov.-2013
 @author: jessa
 '''
 
-import matplotlib.pyplot as plt
-import dataTransform.accproc as ac
-import features.FeatureExtraction as fa
+from cgi import maxlen
+import math
+
 from IPython.core.display import display
 import pylab
-import math
 from scipy import fft, ifft
-import pandas as pd
+
 import app.featuresMain as fm
+import dataTransform.accproc as ac
+import features.FeatureExtraction as fa
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from tools.Tools import getDictArray
-from cgi import maxlen
+
 
 def accproctest() :
     data = ac.readGCDCFormat("..\data\Runs\Example\enkel\DATA-001.csv")
@@ -64,36 +67,30 @@ def accproctest() :
 
     
 def sliding_window(ar, width, freq):
-    nbOfWindows = int(math.floor((len(ar)-width)/freq))
+    nbOfWindows = int(math.floor((len(ar) - width) / freq))
     
     res = []
     
     for i in range(nbOfWindows):
-        start = i*freq
-        end   = start+width
+        start = i * freq
+        end = start + width
         res.append([ar[start:end]])
     
     return res
 
-def getFeatures(path,name,nb) :
+def getFeatures(path, name, nb) :
     from features.PeakSimple import applyFun, toPeaks, varDistanceBetweenPeaks
-    data = fm.getData(path,name,nb)
-    print(data  )
+    data = fm.getData(path, name, nb)
+    print(data)
     if data is None:
         print("NONE")
         return None
     print("SOME")
     peaks = toPeaks(data)
     print(peaks)
-    features = applyFun(peaks,varDistanceBetweenPeaks, 'varDist')
+    features = applyFun(peaks, varDistanceBetweenPeaks, 'varDist')
     return features
 
 if __name__ == '__main__':
-    import pickle
-    alle = {'ankle': {'freq': {'cols': ['Ax', 'Ay', 'Az', 'Atotal'], 'features': ['fcovar', 'MF', 'F']}, 'vel': {'cols': ['Vx', 'Vy', 'Vz'], 'features': ['covar', 'max', 'min', 'median', 'av']}, 'peak': {'cols': [('simple', None), ('cwt', None), ('simple', 'hilbert', True), ('simple', 'hilbert', False), ('simple', 'sg', True), ('simple', 'sg', False), ('simple', 'butter', True), ('simple', 'butter', False), ('cwt', 'hilbert', True), ('cwt', 'hilbert', False), ('cwt', 'sg', True), ('cwt', 'sg', False), ('cwt', 'butter', True), ('cwt', 'butter', False)], 'features': ['varDist', 'maxDist', 'avDist', 'varPeak', 'avPeak', 'minDist', 'maxPeak', 'minPeak']}, 'time': {'cols': ['Ax', 'Ay', 'Az', 'Atotal'], 'features': ['covar', 'max', 'min', 'median', 'av']}}, 'hip': {'freq': {'cols': ['Ax', 'Ay', 'Az', 'Atotal'], 'features': ['fcovar', 'MF', 'F']}, 'vel': {'cols': ['Vx', 'Vy', 'Vz'], 'features': ['covar', 'max', 'min', 'median', 'av']}, 'peak': {'cols': [('simple', None), ('cwt', None), ('simple', 'hilbert', True), ('simple', 'hilbert', False), ('simple', 'sg', True), ('simple', 'sg', False), ('simple', 'butter', True), ('simple', 'butter', False), ('cwt', 'hilbert', True), ('cwt', 'hilbert', False), ('cwt', 'sg', True), ('cwt', 'sg', False), ('cwt', 'butter', True), ('cwt', 'butter', False)], 'features': ['varDist', 'maxDist', 'avDist', 'varPeak', 'avPeak', 'minDist', 'maxPeak', 'minPeak']}, 'time': {'cols': ['Ax', 'Ay', 'Az', 'Atotal'], 'features': ['covar', 'max', 'min', 'median', 'av']}}}
-    print(alle)
-    print(type(alle))
-    path = "..\data\\"
-    name = ".._.._Runs_"
-    f = file(path+name, "w")
-    pickle.dump(alle, f)
+    print(("JEssa" +
+            "Joepie"))
