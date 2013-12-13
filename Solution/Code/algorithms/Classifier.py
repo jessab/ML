@@ -55,7 +55,7 @@ def selectBestFeaturesRFECV(samples,classifications,featureNames,classifierClass
     return [samples,featureNames]
 
 def selektKBestUncorrelatedFeatures(samples,classifications,featureNames,nbFeatures=10):
-    [samples,featureNames] = selectKBestFeatures(samples, classifications, featureNames, 10*nbFeatures)
+    [samples,featureNames,scores] = selectKBestFeatures(samples, classifications, featureNames, nbFeatures)
     
     isSparse = (type(samples)==csr_matrix)
     
@@ -64,12 +64,18 @@ def selektKBestUncorrelatedFeatures(samples,classifications,featureNames,nbFeatu
     
     corr = np.corrcoef(samples, rowvar=False)
     
+    sel = []    
     pos = range(10*nbFeatures)
-    for i in range(nbFeatures-1):
-        pos=[j for j in pos if j<=pos[i] or abs(corr[pos[i],j])<0.85]
+    
+    for i in range(nbFeatures):
+#         pos=[j for j in pos if j<=pos[i] or abs(corr[pos[i],j])<0.85]
+        s = np.argmax(scores)
+        scores[s]=0
+        sel+=s
+        pos = [j for j in pos if j!=s and abs(corr[s,j])<0.85]
         
     samples = np.transpose(samples)
-    samples = np.transpose([np.array(samples[j,:]).reshape(-1) for j in pos[:nbFeatures]])
+    samples = np.transpose([np.array(samples[j,:]).reshape(-1) for j in sel])
     if isSparse:
         samples = csr_matrix(samples)
     

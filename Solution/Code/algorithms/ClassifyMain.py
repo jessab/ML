@@ -10,6 +10,8 @@ import pylab
 import warnings
 warnings.filterwarnings("ignore")
 
+selF = False
+
 def main(path=""):
     if (path):
         data = fm.main(True,path)
@@ -45,7 +47,7 @@ def main(path=""):
     pylab.show()
 
 def evalSVM(data, classifyTrained, classifySurface):
-    classifier = cl.classifyDataSVM(data, classifyTrained, classifySurface)
+    classifier = cl.classifyDataSVM(data, classifyTrained, classifySurface,selF)
     classifier.crossValidation()
 #     classifier.showProperties()
 #     classifier.showSupportVectors()
@@ -53,20 +55,20 @@ def evalSVM(data, classifyTrained, classifySurface):
     classifier.plotDecisionSurface()
     
 def evalDT(data, classifyTrained, classifySurface):
-    classifier = cl.classifyDataDT(data, classifyTrained, classifySurface)
+    classifier = cl.classifyDataDT(data, classifyTrained, classifySurface,selF)
     classifier.crossValidation()
 #     classifier.showFeatureImportances()
 #     classifier.createTreePdf()
     classifier.plotDecisionSurface()
     
 def evalKNN(data, classifyTrained, classifySurface):
-    classifier = cl.classifyDataKNN(data, classifyTrained, classifySurface)
+    classifier = cl.classifyDataKNN(data, classifyTrained, classifySurface,selF)
     classifier.crossValidation()
 #     classifier.showKNeighborsGraph()
     classifier.plotDecisionSurface()
     
 def evalLR(data, classifyTrained, classifySurface):
-    classifier = cl.classifyDataLR(data, classifyTrained, classifySurface)
+    classifier = cl.classifyDataLR(data, classifyTrained, classifySurface,selF)
     classifier.crossValidation()
     classifier.plotDecisionSurface()
     
