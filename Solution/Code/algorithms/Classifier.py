@@ -44,7 +44,9 @@ def selectKBestFeatures(samples,classifications,featureNames,nbFeatures=10):
     sup = fs.get_support()
     
     featureNames = [featureNames[i] for (i,s) in enumerate(sup) if s]
-    return [samples,featureNames]
+    scores = fs.scores_
+    scores = [s for (i,s) in enumerate(scores) if sup[i]]
+    return [samples,featureNames,scores]
 
 def selectBestFeaturesRFECV(samples,classifications,featureNames,classifierClass):
     fs = RFECV(classifierClass.getEstimator())
