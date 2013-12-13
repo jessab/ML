@@ -9,7 +9,6 @@ import warnings
 import pylab
 
 import Classifier as cl
-import app.featuresMain as fm
 
 
 warnings.filterwarnings("ignore")
@@ -17,11 +16,7 @@ warnings.filterwarnings("ignore")
 selF = True
 
 
-def main(path=""):
-    if (path):
-        data = fm.main(True, path)
-    else:
-        data = fm.main()
+def main(data):
     print("\nSVM: trained/not trained")
     evalSVM(data, True, False)
     print("\nSVM: surface")
@@ -118,4 +113,4 @@ if __name__ == '__main__':
     if len(args) > 1:
         main(args[1])
     else:
-        main()
+        pass

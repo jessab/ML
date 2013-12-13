@@ -18,6 +18,8 @@ def checkPath(path):
 
 
 def main(useExisting=True, path="..\..\Runs\\", features=None):
+    if path is None:
+        path = "..\..\Runs\\"
     path = checkPath(path)
 
     if features is not None:
@@ -26,8 +28,6 @@ def main(useExisting=True, path="..\..\Runs\\", features=None):
             features = featuresToRequiredDict(features)
 
     data = getData(path, features, useExisting)
-    print(data.Features)
-    print(data)
     return data
 
 

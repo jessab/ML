@@ -4,8 +4,8 @@ Created on 6-dec.-2013
 @author: jessa
 '''
 
-import numpy as np
 from dataTransform.accproc import detectPeaksGCDC
+import numpy as np
 
 
 def peakTupToStr(tup):

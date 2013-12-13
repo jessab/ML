@@ -12,7 +12,7 @@ import Velocity as vs
 
 def checkRequiredFeatures(requiredFeatures, generatedFeatures):
     if requiredFeatures is None:
-        requiredFeatures = generatedFeatures
+        requiredFeatures = getAllFeatures()
     generatedFeatures.update(requiredFeatures)
 
     return generatedFeatures
