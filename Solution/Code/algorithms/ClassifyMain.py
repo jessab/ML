@@ -48,7 +48,6 @@ def evalSVM(data, classifyTrained, classifySurface):
     classifier = cl.classifyDataSVM(data, classifyTrained, classifySurface)
     classifier.crossValidation()
 #     classifier.showProperties()
-    classifier.plotDecisionSurface()
 #     classifier.showSupportVectors()
 #     classifier.showSelectedFeatures()
     classifier.plotDecisionSurface()

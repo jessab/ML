@@ -19,6 +19,7 @@ import pylab as pl
 from matplotlib import colors
 import tools.Tools as tls
 import numpy as np
+from scipy.sparse import csr_matrix
 
 def surfaces():
     return ["Asphalt","Track", "Woodchip"]
@@ -43,7 +44,9 @@ def selectKBestFeatures(samples,classifications,featureNames,nbFeatures=10):
     sup = fs.get_support()
     
     featureNames = [featureNames[i] for (i,s) in enumerate(sup) if s]
-    return [samples,featureNames]
+    scores = fs.scores_
+    scores = [s for (i,s) in enumerate(scores) if sup[i]]
+    return [samples,featureNames,scores]
 
 def selectBestFeaturesRFECV(samples,classifications,featureNames,classifierClass):
     fs = RFECV(classifierClass.getEstimator())
@@ -53,9 +56,33 @@ def selectBestFeaturesRFECV(samples,classifications,featureNames,classifierClass
     featureNames = [featureNames[i] for (i,s) in enumerate(sup) if s]
     return [samples,featureNames]
 
+def selektKBestUncorrelatedFeatures(samples,classifications,featureNames,nbFeatures=10):
+    [samples,featureNames] = selectKBestFeatures(samples, classifications, featureNames, 10*nbFeatures)
+    
+    isSparse = (type(samples)==csr_matrix)
+    
+    if isSparse:
+        samples = samples.todense()
+    
+    corr = np.corrcoef(samples, rowvar=False)
+    
+    pos = range(10*nbFeatures)
+    for i in range(nbFeatures-1):
+        pos=[j for j in pos if j<=pos[i] or abs(corr[pos[i],j])<0.85]
+        
+    samples = np.transpose(samples)
+    samples = np.transpose([np.array(samples[j,:]).reshape(-1) for j in pos[:nbFeatures]])
+    if isSparse:
+        samples = csr_matrix(samples)
+    
+    featureNames = [featureNames[i] for i in pos[:nbFeatures]]
+    
+    return [samples,featureNames]
+
 def selectFeatures(samples,classifications,featureNames,classifierClass,nbFeatures=10):
 #     [samples,featureNames] = selectBestFeaturesRFECV(samples, classifications, featureNames, classifierClass)
-    [samples,featureNames] = selectKBestFeatures(samples, classifications, featureNames, nbFeatures)
+#     [samples,featureNames] = selectKBestFeatures(samples, classifications, featureNames, nbFeatures)
+    [samples,featureNames] = selektKBestUncorrelatedFeatures(samples, classifications, featureNames, nbFeatures)
     return [samples,featureNames]
     
 def selectClassifications(data,classifyTrained,classifySurface):
