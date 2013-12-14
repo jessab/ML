@@ -6,8 +6,8 @@ Created on 13-dec.-2013
 
 import sys
 
-import algorithms.ClassifyMain as cm
-import app.featuresMain as fm
+import classification.ClassifyMain as cm
+import featuresMain as fm
 from dataTransform.Preprocessing import filterRun3
 from dataTransform.accproc import preprocessGCDC, readGCDCFormat
 from features.FeatureExtraction import extract

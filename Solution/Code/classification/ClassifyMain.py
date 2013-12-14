@@ -5,7 +5,10 @@ Created on 6-dec.-2013
 '''
 import Classifier as cl
 import sys
-import app.featuresMain as fm
+try:
+    import app.featuresMain as fm
+except:
+    pass
 import pylab
 import warnings
 warnings.filterwarnings("ignore")
