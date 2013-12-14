@@ -4,6 +4,7 @@ Created on 5-dec.-2013
 @author: Koen
 '''
 import warnings
+from sklearn.linear_model.logistic import LogisticRegression
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore",category=DeprecationWarning)
@@ -12,7 +13,6 @@ from sklearn import svm, cross_validation, tree, datasets
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.externals.six import StringIO  
 from sklearn.feature_extraction import DictVectorizer
-from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import SelectKBest, RFECV, f_classif
 from sklearn import preprocessing as pp
 import pylab as pl
@@ -25,7 +25,7 @@ def surfaces():
     return ["Asphalt","Track", "Woodchip"]
 
 def trainedClasses():
-    return ["Not Trained", "Trained"]
+    return ["Untrained", "Trained"]
 
 def extractData(data):
     features = tls.getDictArray(data.Features)
@@ -56,7 +56,7 @@ def selectBestFeaturesRFECV(samples,classifications,featureNames,classifierClass
     featureNames = [featureNames[i] for (i,s) in enumerate(sup) if s]
     return [samples,featureNames]
 
-def selektKBestUncorrelatedFeatures(samples,classifications,featureNames,nbFeatures=10):
+def selectKBestUncorrelatedFeatures(samples,classifications,featureNames,nbFeatures=10):
     poolSize = 10*nbFeatures
     if (len(featureNames) < poolSize):
         poolSize = len(featureNames)
@@ -83,9 +83,10 @@ def selektKBestUncorrelatedFeatures(samples,classifications,featureNames,nbFeatu
     return [samples,featureNames]
 
 def selectFeatures(samples,classifications,featureNames,classifierClass,nbFeatures=10):
-#     [samples,featureNames] = selectBestFeaturesRFECV(samples, classifications, featureNames, classifierClass)
-#     [samples,featureNames] = selectKBestFeatures(samples, classifications, featureNames, nbFeatures)
-    [samples,featureNames] = selektKBestUncorrelatedFeatures(samples, classifications, featureNames, nbFeatures)
+    try:
+        [samples,featureNames] = selectBestFeaturesRFECV(samples, classifications, featureNames, classifierClass)
+    except:
+        [samples,featureNames] = selectKBestUncorrelatedFeatures(samples, classifications, featureNames, nbFeatures)
     return [samples,featureNames]
     
 def selectClassifications(data,classifyTrained,classifySurface):
@@ -94,7 +95,7 @@ def selectClassifications(data,classifyTrained,classifySurface):
         s = data.Surface
         classifications = [(3*t[i] + surfaces().index(s[i].strip())) for (i,_) in enumerate(t)]
         classifications = np.asarray(classifications)
-        classNames = [t + " - "+ s for t in trainedClasses() for s in surfaces()]
+        classNames = [t + "&"+ s for t in trainedClasses() for s in surfaces()]
     elif (classifyTrained):
         classifications = data.Trained
         classNames = trainedClasses()
@@ -251,7 +252,7 @@ class SVMClassifier(Classifier):
 class DTClassifier(Classifier):
     
     def __init__(self, samples, featureNames, classifications, classificationNames):
-        self.clf = tree.DecisionTreeClassifier(min_samples_split=4, max_depth=4)
+        self.clf = tree.DecisionTreeClassifier(min_samples_split=8, max_depth=4)
         if (type(samples)!=np.ndarray):
             samples = samples.toarray()
         Classifier.__init__(self, samples, featureNames, classifications, classificationNames)
@@ -274,7 +275,7 @@ class DTClassifier(Classifier):
         dot_data = StringIO()
         tree.export_graphviz(self.getClf(), out_file = dot_data, feature_names=self.featureNames)
         graph = pydot.graph_from_dot_data(dot_data.getvalue()) 
-        graph.write_pdf("tree.pdf") 
+        graph.write_pdf("DT" + "-".join(self.classNames)+ ".pdf") 
         
     
     def classifierName(self):
@@ -309,6 +310,10 @@ class LRClassifier(Classifier):
     
     def classifierName(self):
         return "LogReg"
+    
+    @staticmethod     
+    def getEstimator():
+        return LogisticRegression()
     
 if __name__ == '__main__':
     iris = datasets.load_iris()
