@@ -19,11 +19,14 @@ showDT = True
 showKNN = True
 showLR = True
 
-def main(path="",selectFeatures=False):
-    if (path):
-        data = fm.main(True,path)
-    else:
+def main(data=None,selectFeatures='all'):
+    if (data is None):
         data = fm.main()
+
+    if 'RFECV' in selectFeatures:
+        showDT = False
+        showKNN = False
+
     if (showSVM):
         print("\nSVM: trained/not trained")
         evalSVM(data, True,False,selectFeatures)
@@ -35,7 +38,7 @@ def main(path="",selectFeatures=False):
     if (showDT):
         print("\nDT: trained/not trained")
         evalDT(data, True,False,selectFeatures)
-        print("\nDT: surface\n")
+        print("\nDT: surface")
         evalDT(data, False,True,selectFeatures)
         print("\nDT: trained-surface")
         evalDT(data, True,True,selectFeatures)
@@ -43,7 +46,7 @@ def main(path="",selectFeatures=False):
     if (showKNN):
         print("\nKNN: trained/not trained")
         evalKNN(data, True,False,selectFeatures)
-        print("\nKNN: surface\n")
+        print("\nKNN: surface")
         evalKNN(data, False,True,selectFeatures)
         print("\nKNN: trained-surface")
         evalKNN(data, True,True,selectFeatures)
@@ -51,7 +54,7 @@ def main(path="",selectFeatures=False):
     if (showLR):
         print("\nLR: trained/not trained")
         evalLR(data, True,False,selectFeatures)
-        print("\nLR: surface\n")
+        print("\nLR: surface")
         evalLR(data, False,True,selectFeatures)
         print("\nLR: trained-surface")
         evalLR(data, True,True,selectFeatures)
@@ -87,7 +90,7 @@ def evalLR(data, classifyTrained, classifySurface,selectFeatures):
     if (plotSurfaces):
         classifier.plotDecisionSurface()
     
-def predict(data, samples, classifier='SVM', classification='combined',selectFeatures=False):
+def predict(data, samples, classifier='SVM', classification='combined',selectFeatures=('CUK',10)):
     """
     Learns the data-set with the given classifier and gives a prediction for each of the samples.
     """

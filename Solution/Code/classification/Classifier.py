@@ -7,11 +7,11 @@ import warnings
 from sklearn.linear_model.logistic import LogisticRegression
 
 with warnings.catch_warnings():
-    warnings.filterwarnings("ignore",category=DeprecationWarning)
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 from sklearn import svm, cross_validation, tree, datasets
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.externals.six import StringIO  
+from sklearn.externals.six import StringIO
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_selection import SelectKBest, RFECV, f_classif
 from sklearn import preprocessing as pp
@@ -20,6 +20,7 @@ from matplotlib import colors
 import tools.Tools as tls
 import numpy as np
 from scipy.sparse import csr_matrix
+
 
 def surfaces():
     return ["Asphalt","Track", "Woodchip"]
@@ -36,19 +37,20 @@ def extractData(data):
     samples = imp.transform(samples)
     samples = pp.scale(samples, with_mean=False)
     featureNames = vec.get_feature_names()
-    return [samples,featureNames]
+    return [samples, featureNames]
 
-def selectKBestFeatures(samples,classifications,featureNames,nbFeatures=10):
-    fs = SelectKBest(f_classif,k=nbFeatures)
+def selectKBestFeatures(samples, classifications, featureNames, nbFeatures=10):
+    fs = SelectKBest(f_classif, k=nbFeatures)
     samples = fs.fit_transform(samples, classifications)
     sup = fs.get_support()
-    
-    featureNames = [featureNames[i] for (i,s) in enumerate(sup) if s]
-    scores = fs.scores_
-    scores = [s for (i,s) in enumerate(scores) if sup[i]]
-    return [samples,featureNames,scores]
 
-def selectBestFeaturesRFECV(samples,classifications,featureNames,classifierClass):
+    featureNames = [featureNames[i] for (i, s) in enumerate(sup) if s]
+    scores = fs.scores_
+    scores = [s for (i, s) in enumerate(scores) if sup[i]]
+    return [samples, featureNames, scores]
+
+def selectBestFeaturesRFECV(samples, classifications,
+                            featureNames, classifierClass):
     fs = RFECV(classifierClass.getEstimator())
     samples = fs.fit_transform(samples.toarray(), classifications)
     sup = fs.get_support()
@@ -56,25 +58,31 @@ def selectBestFeaturesRFECV(samples,classifications,featureNames,classifierClass
     featureNames = [featureNames[i] for (i,s) in enumerate(sup) if s]
     return [samples,featureNames]
 
-def selectKBestUncorrelatedFeatures(samples,classifications,featureNames,nbFeatures=10):
-    poolSize = 10*nbFeatures
-    if (len(featureNames) < poolSize):
-        poolSize = len(featureNames)
-    [samples,featureNames,_] = selectKBestFeatures(samples, classifications, featureNames, poolSize)
-    
-    isSparse = (type(samples)==csr_matrix)
-    
+def selectKBestUncorrelatedFeatures(samples, classifications,
+                                    featureNames, nbFeatures=10):
+    k10 = 10 * nbFeatures
+    [samples, featureNames, scores] = selectKBestFeatures(samples,
+                                    classifications, featureNames, k10)
+
+    if len(featureNames) < k10:
+        k10 = len(featureNames)
+
+    isSparse = (type(samples) == csr_matrix)
+
     if isSparse:
         samples = samples.todense()
-    
+
     corr = np.corrcoef(samples, rowvar=False)
-    
-    pos = range(poolSize)
-    for i in range(nbFeatures-1):
-        pos=[j for j in pos if j<=pos[i] or abs(corr[pos[i],j])<0.85]
-        
+    sel = []
+    for _ in range(nbFeatures):
+        if len([s for s in scores if s > 0]) == 0:
+            break
+        s = np.argmax(scores)
+        sel.append(s)
+        scores = map(lambda i: scores[i] * (corr[s, i] < 0.2), range(k10))
+
     samples = np.transpose(samples)
-    samples = np.transpose([np.array(samples[j,:]).reshape(-1) for j in pos[:nbFeatures]])
+    samples = np.transpose([np.array(samples[j, :]).reshape(-1) for j in sel])
     if isSparse:
         samples = csr_matrix(samples)
     
@@ -82,19 +90,37 @@ def selectKBestUncorrelatedFeatures(samples,classifications,featureNames,nbFeatu
     
     return [samples,featureNames]
 
-def selectFeatures(samples,classifications,featureNames,classifierClass,nbFeatures=10,hardNumberConstraint=False):
-    if (not hardNumberConstraint):
+def selectFeatures(samples, classifications, featureNames, classifierClass, selectionMethod, silent=False):
+    if 'RFECV' in selectionMethod:
         try:
             [samples,featureNames] = selectBestFeaturesRFECV(samples, classifications, featureNames, classifierClass)
-            print ("Using RFECV feature selection")
+            if (not silent):
+                print ("Using RFECV feature selection")
         except:
             [samples,featureNames] = selectKBestUncorrelatedFeatures(samples, classifications, featureNames, nbFeatures)
-            print ("Using KBest feature selection with correlation filter")
+            if (not silent):
+                print ("Using KBest feature selection with correlation filter")
     else:
-        [samples,featureNames] = selectKBestUncorrelatedFeatures(samples, classifications, featureNames, nbFeatures)
-    print("Selected features:")
-    for fn in featureNames:
-        print(fn)
+        sel, nbFeatures = selectionMethod
+        if 'KUC' in sel:
+            [samples,featureNames] = selectKBestUncorrelatedFeatures(samples, classifications, featureNames, nbFeatures)
+            if (not silent):
+                print ("Using KBest feature selection with correlation filter")
+        else:
+            [samples,featureNames,_] = selectKBestFeatures(samples, classifications, featureNames, nbFeatures)
+            if (not silent):
+                print ("Using KBest feature selection")
+    
+    if (not silent):
+        print(str(len(featureNames)) + " features selected:")
+        if (len(featureNames) > 10):
+            [_,fnamelist,_] = selectKBestFeatures(samples, classifications, featureNames, 10)
+            for fn in fnamelist:
+                print("  " + fn)
+            print("  ...")
+        else:
+            for fn in featureNames:
+                print("  " + fn)
     
     return [samples,featureNames] 
     
@@ -119,22 +145,30 @@ def classifyData(data, classifyTrained, classifySurface, classifierClass, featur
     [samples,featureNames] = extractData(data)
     [classifications, classNames] = selectClassifications(data, classifyTrained, classifySurface)
     
-    if (featuresSelect):
-        [samples,featureNames] = selectFeatures(samples, classifications, featureNames,classifierClass)
+    if (not 'all' in featuresSelect):
+        [samples,featureNames] = selectFeatures(samples, classifications, featureNames,classifierClass, featuresSelect)
+    else:
+        print('Using all features')
     classifier = classifierClass(samples,featureNames,classifications,classNames)
     
     return classifier
 
-def classifyDataDT(data, classifyTrained, classifySurface,selectFeatures=False):
+def classifyDataDT(data, classifyTrained, classifySurface,selectFeatures=('KUC',10)):
+    if 'RFECV' in selectFeatures:
+        print('RFECV cannot be used in combination with DT')
+        raise SystemExit(0)
     return classifyData(data, classifyTrained, classifySurface, DTClassifier,selectFeatures)
 
-def classifyDataSVM(data, classifyTrained, classifySurface,selectFeatures=False):
+def classifyDataSVM(data, classifyTrained, classifySurface,selectFeatures=('KUC',10)):
     return classifyData(data, classifyTrained, classifySurface, SVMClassifier,selectFeatures)
 
-def classifyDataKNN(data,classifyTrained, classifySurface,selectFeatures=False):
+def classifyDataKNN(data,classifyTrained, classifySurface,selectFeatures=('KUC',10)):
+    if 'RFECV' in selectFeatures:
+        print('RFECV cannot be used in combination with KNN')
+        raise Exception
     return classifyData(data, classifyTrained, classifySurface, KNNClassifier,selectFeatures)
 
-def classifyDataLR(data,classifyTrained, classifySurface,selectFeatures=False):
+def classifyDataLR(data,classifyTrained, classifySurface,selectFeatures=('KUC',10)):
     return classifyData(data, classifyTrained, classifySurface, LRClassifier,selectFeatures)
 
 class Classifier(object):
@@ -180,7 +214,7 @@ class Classifier(object):
     
     def plotDecisionSurface(self):
         classifierClass = self.__class__
-        [samples,featureNames] = selectFeatures(self.samples, self.classifications, self.featureNames,classifierClass,2,True)
+        [samples,featureNames] = selectFeatures(self.samples, self.classifications, self.featureNames,classifierClass,('KUC',2))
         clf = classifierClass(samples,featureNames,self.classifications,self.classNames)
         
         X = samples
