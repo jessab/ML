@@ -36,7 +36,7 @@ def interpretClassifyOptions(options):
     defaultVals = {
             'c': 'trained',
             'a': 'SVM',
-            'f': 'all',
+            'f': 'RFECV',
             'p': None
             }
 
@@ -85,7 +85,7 @@ def setAlgo(options, posOptions, vals):
         print('classification algorithm was expected')
         raise SystemExit(0)
     vals['a'] = algo
-    return lookForNextOptions(options, posOptions, vals)
+    return lookForNextOptions(options[1:], posOptions, vals)
 
 
 def setFeatures(options, posOptions, vals):
