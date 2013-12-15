@@ -98,15 +98,10 @@ def evalLR(data, classifyTrained, classifySurface, selectFeatures):
     classifier.crossValidation()
     if (plotSurfaces):
         classifier.plotDecisionSurface()
-<<<<<<< HEAD
 
 
 def predict(data, samples, classifier='SVM',
             classification='combined', selectFeatures=('CUK', 10)):
-=======
-    
-def predict(data, samples, classifier='SVM', classification='combined',selectFeatures=False):
->>>>>>> 57119e10c5817473fb3516ee5e9d62fd167a92c0
     """
     Learns the data-set with the given classifier and
     gives a prediction for each of the samples.
