@@ -123,26 +123,28 @@ def classifyData(data, classifyTrained, classifySurface, classifierClass, featur
     
     if (not 'all' in featuresSelect):
         [samples,featureNames] = selectFeatures(samples, classifications, featureNames,classifierClass, featuresSelect)
+    else:
+        print('Using all features')
     classifier = classifierClass(samples,featureNames,classifications,classNames)
     
     return classifier
 
 def classifyDataDT(data, classifyTrained, classifySurface,selectFeatures=('CUK',10)):
     if 'RFECV' in selectFeatures:
-        print('RFECV cannot be usedin combination with DT')
+        print('RFECV cannot be used in combination with DT')
         raise Exception
     return classifyData(data, classifyTrained, classifySurface, DTClassifier,selectFeatures)
 
-def classifyDataSVM(data, classifyTrained, classifySurface,selectFeatures=False):
+def classifyDataSVM(data, classifyTrained, classifySurface,selectFeatures=('CUK',10)):
     return classifyData(data, classifyTrained, classifySurface, SVMClassifier,selectFeatures)
 
-def classifyDataKNN(data,classifyTrained, classifySurface,selectFeatures=False):
+def classifyDataKNN(data,classifyTrained, classifySurface,selectFeatures=('CUK',10)):
     if 'RFECV' in selectFeatures:
-        print('RFECV cannot be usedin combination with KNN')
+        print('RFECV cannot be used in combination with KNN')
         raise Exception
     return classifyData(data, classifyTrained, classifySurface, KNNClassifier,selectFeatures)
 
-def classifyDataLR(data,classifyTrained, classifySurface,selectFeatures=False):
+def classifyDataLR(data,classifyTrained, classifySurface,selectFeatures=('CUK',10)):
     return classifyData(data, classifyTrained, classifySurface, LRClassifier,selectFeatures)
 
 class Classifier(object):

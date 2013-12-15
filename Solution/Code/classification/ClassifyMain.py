@@ -13,7 +13,7 @@ import pylab
 import warnings
 warnings.filterwarnings("ignore")
 
-plotSurfaces=True
+plotSurfaces=False
 showSVM = True
 showDT = True
 showKNN = True
@@ -85,7 +85,7 @@ def evalLR(data, classifyTrained, classifySurface,selectFeatures):
     if (plotSurfaces):
         classifier.plotDecisionSurface()
     
-def predict(data, samples, classifier='SVM', classification='combined',selectFeatures=False):
+def predict(data, samples, classifier='SVM', classification='combined',selectFeatures=('CUK',10)):
     """
     Learns the data-set with the given classifier and gives a prediction for each of the samples.
     """
