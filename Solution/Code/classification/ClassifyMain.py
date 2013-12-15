@@ -13,15 +13,21 @@ import pylab
 import warnings
 warnings.filterwarnings("ignore")
 
-plotSurfaces=False
+plotSurfaces = False
 showSVM = True
 showDT = True
 showKNN = True
 showLR = True
 
+
 def main(data=None,selectFeatures='all'):
     if (data is None):
         data = fm.main()
+
+    if 'RFECV' in selectFeatures:
+        showDT = False
+        showKNN = False
+
     if (showSVM):
         print("\nSVM: trained/not trained")
         evalSVM(data, True,False,selectFeatures)
@@ -33,7 +39,7 @@ def main(data=None,selectFeatures='all'):
     if (showDT):
         print("\nDT: trained/not trained")
         evalDT(data, True,False,selectFeatures)
-        print("\nDT: surface\n")
+        print("\nDT: surface")
         evalDT(data, False,True,selectFeatures)
         print("\nDT: trained-surface")
         evalDT(data, True,True,selectFeatures)
@@ -41,7 +47,7 @@ def main(data=None,selectFeatures='all'):
     if (showKNN):
         print("\nKNN: trained/not trained")
         evalKNN(data, True,False,selectFeatures)
-        print("\nKNN: surface\n")
+        print("\nKNN: surface")
         evalKNN(data, False,True,selectFeatures)
         print("\nKNN: trained-surface")
         evalKNN(data, True,True,selectFeatures)
@@ -49,7 +55,7 @@ def main(data=None,selectFeatures='all'):
     if (showLR):
         print("\nLR: trained/not trained")
         evalLR(data, True,False,selectFeatures)
-        print("\nLR: surface\n")
+        print("\nLR: surface")
         evalLR(data, False,True,selectFeatures)
         print("\nLR: trained-surface")
         evalLR(data, True,True,selectFeatures)

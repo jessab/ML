@@ -54,8 +54,6 @@ def toPeaks(data, peakTups):
         try:
             peaks[name] = genPeaks(data, tup)
         except Exception as ex:
-            print(ex)
-            print(name)
             peaks[name] = None
             continue
 
