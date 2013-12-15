@@ -110,7 +110,7 @@ def predict(data, samples, classifier='SVM',
     if (classification == "trained"):
         classifyTrained = True
         classifySurface = False
-    elif (classification == "surface"):
+    elif (classification == 'surface'):
         classifyTrained = False
         classifySurface = True
     else:
@@ -142,9 +142,11 @@ def predict(data, samples, classifier='SVM',
 
 if __name__ == '__main__':
     args = sys.argv
-    if len(args)>2:
-        main(args[1],args[2])
-    elif len(args)>1:
+    if len(args) > 3:
+        main(args[1], args[2], args[3])
+    elif len(args) > 2:
+        main(args[1], args[2])
+    elif len(args) > 1:
         main(args[1])
     else:
         main()

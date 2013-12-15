@@ -231,7 +231,7 @@ class Classifier(object):
 
     def showProperties(self):
         raise NotImplementedError("Subclass must implement abstract method")
-    
+
     def getFeatureNames(self):
         return self.featureNames
     

@@ -12,9 +12,15 @@ import features.FeatureExtraction as fa
 import pandas as pd
 from tools.nestedDictTools import diff, union, isEmpty, colsFirstFeaturesSecond
 
+import os
+
 
 def getDataPath():
-    return "..\data\\"
+    posPaths = ["data\\", "..\data\\", "..\..\data"]
+    for path in posPaths:
+        if os.path.isdir(path):
+            return path
+    raise Exception("Path to Data info does not exist")
 
 
 def getName(path):
