@@ -82,12 +82,21 @@ def selectKBestUncorrelatedFeatures(samples,classifications,featureNames,nbFeatu
     
     return [samples,featureNames]
 
-def selectFeatures(samples,classifications,featureNames,classifierClass,nbFeatures=10):
-    try:
-        [samples,featureNames] = selectBestFeaturesRFECV(samples, classifications, featureNames, classifierClass)
-    except:
+def selectFeatures(samples,classifications,featureNames,classifierClass,nbFeatures=10,hardNumberConstraint=False):
+    if (not hardNumberConstraint):
+        try:
+            [samples,featureNames] = selectBestFeaturesRFECV(samples, classifications, featureNames, classifierClass)
+            print ("Using RFECV feature selection")
+        except:
+            [samples,featureNames] = selectKBestUncorrelatedFeatures(samples, classifications, featureNames, nbFeatures)
+            print ("Using KBest feature selection with correlation filter")
+    else:
         [samples,featureNames] = selectKBestUncorrelatedFeatures(samples, classifications, featureNames, nbFeatures)
-    return [samples,featureNames]
+    print("Selected features:")
+    for fn in featureNames:
+        print(fn)
+    
+    return [samples,featureNames] 
     
 def selectClassifications(data,classifyTrained,classifySurface):
     if (classifyTrained and classifySurface):
@@ -162,11 +171,6 @@ class Classifier(object):
         scores = cross_validation.cross_val_score(self.getClf(), self.getSamples(), self.getClassifications())
         print("Accuracy: \n mean:%f \n std:%f" % (scores.mean(), scores.std()))
         
-    def showSelectedFeatures(self):
-        print("Selected features:")
-        for fn in self.featureNames:
-            print(fn)
-            
     def showProperties(self):
         raise NotImplementedError("Subclass must implement abstract method")
     
@@ -176,7 +180,7 @@ class Classifier(object):
     
     def plotDecisionSurface(self):
         classifierClass = self.__class__
-        [samples,featureNames] = selectFeatures(self.samples, self.classifications, self.featureNames,classifierClass,2)
+        [samples,featureNames] = selectFeatures(self.samples, self.classifications, self.featureNames,classifierClass,2,True)
         clf = classifierClass(samples,featureNames,self.classifications,self.classNames)
         
         X = samples
@@ -282,7 +286,7 @@ class DTClassifier(Classifier):
         return "DT"
     
 class KNNClassifier(Classifier):
-    def __init__(self, samples, featureNames, classifications, classificationNames, k=5):
+    def __init__(self, samples, featureNames, classifications, classificationNames, k=10):
         self.clf = KNeighborsClassifier(n_neighbors=k, weights='distance')
         Classifier.__init__(self, samples, featureNames, classifications, classificationNames)
         

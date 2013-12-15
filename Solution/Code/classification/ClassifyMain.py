@@ -13,52 +13,51 @@ import pylab
 import warnings
 warnings.filterwarnings("ignore")
 
-selectFeatures=True
-plotSurfaces=False
-showSVM = False
+plotSurfaces=True
+showSVM = True
 showDT = True
 showKNN = True
-showLR = False
+showLR = True
 
-def main(path=""):
+def main(path="",selectFeatures=False):
     if (path):
         data = fm.main(True,path)
     else:
         data = fm.main()
     if (showSVM):
         print("\nSVM: trained/not trained")
-        evalSVM(data, True,False)
+        evalSVM(data, True,False,selectFeatures)
         print("\nSVM: surface")
-        evalSVM(data, False,True)
+        evalSVM(data, False,True,selectFeatures)
         print("\nSVM: trained-surface")
-        evalSVM(data, True,True)
+        evalSVM(data, True,True,selectFeatures)
         pylab.show()
     if (showDT):
         print("\nDT: trained/not trained")
-        evalDT(data, True,False)
+        evalDT(data, True,False,selectFeatures)
         print("\nDT: surface\n")
-        evalDT(data, False,True)
+        evalDT(data, False,True,selectFeatures)
         print("\nDT: trained-surface")
-        evalDT(data, True,True)
+        evalDT(data, True,True,selectFeatures)
         pylab.show()
     if (showKNN):
         print("\nKNN: trained/not trained")
-        evalKNN(data, True,False)
+        evalKNN(data, True,False,selectFeatures)
         print("\nKNN: surface\n")
-        evalKNN(data, False,True)
+        evalKNN(data, False,True,selectFeatures)
         print("\nKNN: trained-surface")
-        evalKNN(data, True,True)
+        evalKNN(data, True,True,selectFeatures)
         pylab.show()
     if (showLR):
         print("\nLR: trained/not trained")
-        evalLR(data, True,False)
+        evalLR(data, True,False,selectFeatures)
         print("\nLR: surface\n")
-        evalLR(data, False,True)
+        evalLR(data, False,True,selectFeatures)
         print("\nLR: trained-surface")
-        evalLR(data, True,True)
+        evalLR(data, True,True,selectFeatures)
         pylab.show()
 
-def evalSVM(data, classifyTrained, classifySurface):
+def evalSVM(data, classifyTrained, classifySurface,selectFeatures):
     classifier = cl.classifyDataSVM(data, classifyTrained, classifySurface,selectFeatures)
     classifier.crossValidation()
 #     classifier.showProperties()
@@ -67,7 +66,7 @@ def evalSVM(data, classifyTrained, classifySurface):
     if (plotSurfaces):
         classifier.plotDecisionSurface()
     
-def evalDT(data, classifyTrained, classifySurface):
+def evalDT(data, classifyTrained, classifySurface,selectFeatures):
     classifier = cl.classifyDataDT(data, classifyTrained, classifySurface,selectFeatures)
     classifier.crossValidation()
 #     classifier.showFeatureImportances()
@@ -75,20 +74,20 @@ def evalDT(data, classifyTrained, classifySurface):
     if (plotSurfaces):
         classifier.plotDecisionSurface()    
 
-def evalKNN(data, classifyTrained, classifySurface):
+def evalKNN(data, classifyTrained, classifySurface,selectFeatures):
     classifier = cl.classifyDataKNN(data, classifyTrained, classifySurface,selectFeatures)
     classifier.crossValidation()
 #     classifier.showKNeighborsGraph()
     if (plotSurfaces):
         classifier.plotDecisionSurface()
     
-def evalLR(data, classifyTrained, classifySurface):
+def evalLR(data, classifyTrained, classifySurface,selectFeatures):
     classifier = cl.classifyDataLR(data, classifyTrained, classifySurface,selectFeatures)
     classifier.crossValidation()
     if (plotSurfaces):
         classifier.plotDecisionSurface()
     
-def predict(data, samples, classifier='LogReg', classification='combined'):
+def predict(data, samples, classifier='SVM', classification='combined',selectFeatures=False):
     """
     Learns the data-set with the given classifier and gives a prediction for each of the samples.
     """
@@ -103,20 +102,24 @@ def predict(data, samples, classifier='LogReg', classification='combined'):
         classifySurface = True
     
     if (classifier=='SVM'):
-        clf = cl.classifyDataSVM(data, classifyTrained, classifySurface)
+        clf = cl.classifyDataSVM(data, classifyTrained, classifySurface,selectFeatures)
     elif (classifier=='DT'):
-        clf = cl.classifyDataDT(data, classifyTrained, classifySurface)
+        clf = cl.classifyDataDT(data, classifyTrained, classifySurface,selectFeatures)
     elif (classifier=='KNN'):
-        clf = cl.classifyDataKNN(data, classifyTrained, classifySurface)
+        clf = cl.classifyDataKNN(data, classifyTrained, classifySurface,selectFeatures)
     elif (classifier=='LogReg'):
-        clf = cl.classifyDataLR(data, classifyTrained, classifySurface)
+        clf = cl.classifyDataLR(data, classifyTrained, classifySurface,selectFeatures)
     
     predictions = [clf.predict(s) for s in samples]
     return predictions
 
 if __name__ == '__main__':
     args = sys.argv
-    if len(args)>1:
+    if len(args)>3:
+        main(args[1],args[2],args[3])
+    elif len(args)>2:
+        main(args[1],args[2])
+    elif len(args)>1:
         main(args[1])
     else :
         main()
