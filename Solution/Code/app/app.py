@@ -31,15 +31,14 @@ def classify(anklePath, hipPath, options):
     features = getFeatures(anklePath, hipPath)
     data = fm.main(True, options['p'])
     print("Predicting classification...")
-    result = cm.predict(data, features, options['a'], options['c'])
-    # Add a way to choose which features (options['f'])
+    result = cm.predict(data, features,
+                        options['a'], options['c'], options['f'])
     print(result)
 
 
 def experiment(options):
     data = fm.main(True, options['p'])
-    cm.main(data)
-    # Add a way to choose which features (options['f'])
+    cm.main(data, options['f'])
 
 
 def getFeatures(anklePath, hipPath):

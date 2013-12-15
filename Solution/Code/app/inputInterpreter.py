@@ -13,7 +13,7 @@ def interpretInput(args):
     if method == 'classify':
         if len(args) < 4:
             print('not enough arguments')
-            raise Exception()
+            raise SystemExit(0)
         anklePath = args[2]
         hipPath = args[3]
         options = interpretClassifyOptions(anklePath, hipPath, args[4:])
@@ -62,73 +62,45 @@ def lookForNextOptions(options, posOptions, vals):
     opt = options[0]
     if not opt in posOptions:
         print('unexpected input: ' + opt + ' is not a possible option')
-        raise Exception()
+        raise SystemExit(0)
 
     return posOptions[opt](options[1:], posOptions, vals)
 
 
 def setClassifier(options, posOptions, vals):
     posClassifiers = ['trained', 'surface', 'combined']
-#     classifiers = []
-#     for i in range(len(options)):
-#         c = options[i]
-#         if c in posClassifiers and not c in classifiers:
-#             classifiers.append(c)
-#         elif c in posOptions:
-#             if i == 0:
-#                 print('no classifiers were added')
-#                 raise Exception()
-#             vals['c'] = classifiers
-#             return lookForNextOptions(options[i:], posOptions, vals)
-#         else:
-#             print('confusing input. Don\'t know what to do with ' + options[i])
-#             raise Exception()
     c = options[0]
     if c not in posClassifiers:
         print('classifier was expected')
-        raise Exception()
+        raise SystemExit(0)
     vals['c'] = c
     return lookForNextOptions(options, posOptions, vals)
 
 
 def setAlgo(options, posOptions, vals):
     posAlgos = ['SVM', 'DT', 'KNN', 'LogReg']
-#     algos = []
-#     for i in range(len(options)):
-#         a = options[i]
-#         if a in posAlgos and not a in algos:
-#             algos.append(a)
-#         elif a in posOptions:
-#             if i == 0:
-#                 print('no classification algorithms were added')
-#                 raise Exception()
-#             vals['a'] = algos
-#             return lookForNextOptions(options[i:], posOptions, vals)
-#         else:
-#             print('confusing input. Don\'t know what to do with ' + options[i])
-#             raise Exception()
     algo = options[0]
     if algo not in posAlgos:
         print('classification algorithm was expected')
-        raise Exception()
+        raise SystemExit(0)
     vals['a'] = algo
     return lookForNextOptions(options, posOptions, vals)
 
 
 def setFeatures(options, posOptions, vals):
-    posFeatures = ['all', 'K', 'KUC']
+    posFeatures = ['all', 'K', 'KUC', 'RFECV']
     f = options[0]
     if f not in posFeatures:
         print('feature specification was expected')
-        raise Exception()
-    if f == 'all':
+        raise SystemExit(0)
+    if f == 'all' or f == 'RFECV':
         vals['f'] = f
         return lookForNextOptions(options[1:], posOptions, vals)
     try:
         n = int(options[1])
     except:
         print("number of wanted features was not given")
-        raise Exception()
+        raise SystemExit(0)
     vals['f'] = (f, n)
     return lookForNextOptions(options[2:], posOptions, vals)
 

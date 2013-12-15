@@ -189,7 +189,6 @@ def getDataNotExisting(path, requiredFeatures):
 def getData(path, requiredFeatures, useExisting):
     if requiredFeatures is None:
         requiredFeatures = fa.getAllFeatures()
-        print(requiredFeatures)
     if useExisting:
         try:
             return getDataExisting(path, requiredFeatures)

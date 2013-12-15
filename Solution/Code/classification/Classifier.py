@@ -85,10 +85,10 @@ def selectKBestUncorrelatedFeatures(samples, classifications,
     samples = np.transpose([np.array(samples[j, :]).reshape(-1) for j in sel])
     if isSparse:
         samples = csr_matrix(samples)
-    
-    featureNames = [featureNames[i] for i in pos[:nbFeatures]]
-    
-    return [samples,featureNames]
+
+    featureNames = [featureNames[i] for i in sel]
+
+    return [samples, featureNames]
 
 def selectFeatures(samples, classifications, featureNames, classifierClass, selectionMethod, silent=False):
     if 'RFECV' in selectionMethod:
@@ -97,7 +97,7 @@ def selectFeatures(samples, classifications, featureNames, classifierClass, sele
             if (not silent):
                 print ("Using RFECV feature selection")
         except:
-            [samples,featureNames] = selectKBestUncorrelatedFeatures(samples, classifications, featureNames, nbFeatures)
+            [samples,featureNames] = selectKBestUncorrelatedFeatures(samples, classifications, featureNames)
             if (not silent):
                 print ("Using KBest feature selection with correlation filter")
     else:

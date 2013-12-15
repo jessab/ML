@@ -90,7 +90,7 @@ def evalLR(data, classifyTrained, classifySurface,selectFeatures):
     if (plotSurfaces):
         classifier.plotDecisionSurface()
     
-def predict(data, samples, classifier='SVM', classification='combined',selectFeatures=('CUK',10)):
+def predict(data, samples, classifier='SVM', classification='combined',selectFeatures=False):
     """
     Learns the data-set with the given classifier and gives a prediction for each of the samples.
     """
