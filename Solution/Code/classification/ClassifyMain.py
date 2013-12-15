@@ -19,10 +19,8 @@ showDT = True
 showKNN = True
 showLR = True
 
-def main(path="",selectFeatures=False):
-    if (path):
-        data = fm.main(True,path)
-    else:
+def main(data=None,selectFeatures='all'):
+    if (data is None):
         data = fm.main()
     if (showSVM):
         print("\nSVM: trained/not trained")

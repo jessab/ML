@@ -116,7 +116,7 @@ def setAlgo(options, posOptions, vals):
 
 
 def setFeatures(options, posOptions, vals):
-    posFeatures = ['all', 'K', 'KUC']
+    posFeatures = ['all', 'K', 'KUC', 'RFECV']
     f = options[0]
     if f not in posFeatures:
         print('feature specification was expected')

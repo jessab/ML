@@ -7,11 +7,11 @@ import warnings
 from sklearn.linear_model.logistic import LogisticRegression
 
 with warnings.catch_warnings():
-    warnings.filterwarnings("ignore",category=DeprecationWarning)
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 from sklearn import svm, cross_validation, tree, datasets
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.externals.six import StringIO  
+from sklearn.externals.six import StringIO
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_selection import SelectKBest, RFECV, f_classif
 from sklearn import preprocessing as pp
@@ -82,16 +82,18 @@ def selectKBestUncorrelatedFeatures(samples,classifications,featureNames,nbFeatu
     
     return [samples,featureNames]
 
-def selectFeatures(samples,classifications,featureNames,classifierClass,nbFeatures=10,hardNumberConstraint=False):
-    if (not hardNumberConstraint):
-        try:
-            [samples,featureNames] = selectBestFeaturesRFECV(samples, classifications, featureNames, classifierClass)
-            print ("Using RFECV feature selection")
-        except:
+def selectFeatures(samples,classifications,featureNames,classifierClass, featureSelect):
+    if 'RFECV' in featureSelect:
+        [samples,featureNames] = selectBestFeaturesRFECV(samples, classifications, featureNames, classifierClass)
+        print ("Using RFECV feature selection")
+    else:
+        sel, nbFeatures = featureSelect 
+        if 'KUB' in sel:
             [samples,featureNames] = selectKBestUncorrelatedFeatures(samples, classifications, featureNames, nbFeatures)
             print ("Using KBest feature selection with correlation filter")
-    else:
-        [samples,featureNames] = selectKBestUncorrelatedFeatures(samples, classifications, featureNames, nbFeatures)
+        else:
+            [samples,featureNames,_] = selectKBestFeatures(samples, classifications, featureNames, nbFeatures)
+            print ("Using KBest feature selection")
     print("Selected features:")
     for fn in featureNames:
         print(fn)
@@ -119,19 +121,25 @@ def classifyData(data, classifyTrained, classifySurface, classifierClass, featur
     [samples,featureNames] = extractData(data)
     [classifications, classNames] = selectClassifications(data, classifyTrained, classifySurface)
     
-    if (featuresSelect):
-        [samples,featureNames] = selectFeatures(samples, classifications, featureNames,classifierClass)
+    if (not 'all' in featuresSelect):
+        [samples,featureNames] = selectFeatures(samples, classifications, featureNames,classifierClass, featuresSelect)
     classifier = classifierClass(samples,featureNames,classifications,classNames)
     
     return classifier
 
-def classifyDataDT(data, classifyTrained, classifySurface,selectFeatures=False):
+def classifyDataDT(data, classifyTrained, classifySurface,selectFeatures=('CUK',10)):
+    if 'RFECV' in selectFeatures:
+        print('RFECV cannot be usedin combination with DT')
+        raise Exception
     return classifyData(data, classifyTrained, classifySurface, DTClassifier,selectFeatures)
 
 def classifyDataSVM(data, classifyTrained, classifySurface,selectFeatures=False):
     return classifyData(data, classifyTrained, classifySurface, SVMClassifier,selectFeatures)
 
 def classifyDataKNN(data,classifyTrained, classifySurface,selectFeatures=False):
+    if 'RFECV' in selectFeatures:
+        print('RFECV cannot be usedin combination with KNN')
+        raise Exception
     return classifyData(data, classifyTrained, classifySurface, KNNClassifier,selectFeatures)
 
 def classifyDataLR(data,classifyTrained, classifySurface,selectFeatures=False):
@@ -180,7 +188,7 @@ class Classifier(object):
     
     def plotDecisionSurface(self):
         classifierClass = self.__class__
-        [samples,featureNames] = selectFeatures(self.samples, self.classifications, self.featureNames,classifierClass,2,True)
+        [samples,featureNames] = selectFeatures(self.samples, self.classifications, self.featureNames,classifierClass,('KUC',2))
         clf = classifierClass(samples,featureNames,self.classifications,self.classNames)
         
         X = samples

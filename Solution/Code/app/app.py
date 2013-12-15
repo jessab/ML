@@ -38,7 +38,7 @@ def classify(anklePath, hipPath, options):
 
 def experiment(options):
     data = fm.main(True, options['p'])
-    cm.main(data)
+    cm.main(data,options['f'])
     # Add a way to choose which features (options['f'])
 
 
