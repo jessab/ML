@@ -364,7 +364,7 @@ class KNNClassifier(Classifier):
         Classifier.__init__(self, samples,
                     featureNames, classifications, classificationNames)
 
-    def getClf(self):
+    def getClf(self):   
         return self.clf
 
     def showKNeighborsGraph(self):
