@@ -23,12 +23,10 @@ from scipy.sparse import csr_matrix
 
 
 def surfaces():
-    return ["Asphalt", "Track", "Woodchip"]
-
+    return ["Asphalt","Track", "Woodchip"]
 
 def trainedClasses():
     return ["Untrained", "Trained"]
-
 
 def extractData(data):
     features = tls.getDictArray(data.Features)
@@ -41,7 +39,6 @@ def extractData(data):
     featureNames = vec.get_feature_names()
     return [samples, featureNames]
 
-
 def selectKBestFeatures(samples, classifications, featureNames, nbFeatures=10):
     fs = SelectKBest(f_classif, k=nbFeatures)
     samples = fs.fit_transform(samples, classifications)
@@ -52,16 +49,14 @@ def selectKBestFeatures(samples, classifications, featureNames, nbFeatures=10):
     scores = [s for (i, s) in enumerate(scores) if sup[i]]
     return [samples, featureNames, scores]
 
-
 def selectBestFeaturesRFECV(samples, classifications,
                             featureNames, classifierClass):
     fs = RFECV(classifierClass.getEstimator())
     samples = fs.fit_transform(samples.toarray(), classifications)
     sup = fs.get_support()
-
-    featureNames = [featureNames[i] for (i, s) in enumerate(sup) if s]
-    return [samples, featureNames]
-
+    
+    featureNames = [featureNames[i] for (i,s) in enumerate(sup) if s]
+    return [samples,featureNames]
 
 def selectKBestUncorrelatedFeatures(samples, classifications,
                                     featureNames, nbFeatures=10):
@@ -95,33 +90,41 @@ def selectKBestUncorrelatedFeatures(samples, classifications,
 
     return [samples, featureNames]
 
-
-def selectFeatures(samples, classifications, featureNames,
-                   classifierClass, featureSelect):
-    if 'RFECV' in featureSelect:
-        [samples, featureNames] = selectBestFeaturesRFECV(samples,
-                                classifications, featureNames, classifierClass)
-        print ("\n Using RFECV feature selection")
-        print(repr(len(featureNames)) + ' features were used')
+def selectFeatures(samples, classifications, featureNames, classifierClass, selectionMethod, silent=False):
+    if 'RFECV' in selectionMethod:
+        try:
+            [samples,featureNames] = selectBestFeaturesRFECV(samples, classifications, featureNames, classifierClass)
+            if (not silent):
+                print ("Using RFECV feature selection")
+        except:
+            [samples,featureNames] = selectKBestUncorrelatedFeatures(samples, classifications, featureNames)
+            if (not silent):
+                print ("Using KBest feature selection with correlation filter")
     else:
-        sel, nbFeatures = featureSelect
+        sel, nbFeatures = selectionMethod
         if 'KUC' in sel:
-            [samples, featureNames] = selectKBestUncorrelatedFeatures(samples,
-                                classifications, featureNames, nbFeatures)
-            print ("\n Using KBest feature selection with correlation filter")
+            [samples,featureNames] = selectKBestUncorrelatedFeatures(samples, classifications, featureNames, nbFeatures)
+            if (not silent):
+                print ("Using KBest feature selection with correlation filter")
         else:
-            [samples, featureNames, _] = selectKBestFeatures(samples,
-                                classifications, featureNames, nbFeatures)
-            print ("\n Using KBest feature selection")
-        print("Selected features:")
-        for fn in featureNames:
-            print(fn)
-        print('\n')
-
-    return [samples, featureNames]
-
-
-def selectClassifications(data, classifyTrained, classifySurface):
+            [samples,featureNames,_] = selectKBestFeatures(samples, classifications, featureNames, nbFeatures)
+            if (not silent):
+                print ("Using KBest feature selection")
+    
+    if (not silent):
+        print(str(len(featureNames)) + " features selected:")
+        if (len(featureNames) > 10):
+            [_,fnamelist,_] = selectKBestFeatures(samples, classifications, featureNames, 10)
+            for fn in fnamelist:
+                print("  " + fn)
+            print("  ...")
+        else:
+            for fn in featureNames:
+                print("  " + fn)
+    
+    return [samples,featureNames] 
+    
+def selectClassifications(data,classifyTrained,classifySurface):
     if (classifyTrained and classifySurface):
         t = data.Trained
         s = data.Surface
@@ -399,4 +402,4 @@ if __name__ == '__main__':
                         ["sep len", "sep wdt", "pet len", "pet wdt"],
                         iris.target, ["Setosa", "Versicolour", "Virginica"])
     clf.plotDecisionSurface()
-    pl.show()
+    pl.show()
