@@ -16,7 +16,8 @@ def interpretInput(args):
             raise SystemExit(0)
         anklePath = args[2]
         hipPath = args[3]
-        options = interpretClassifyOptions(anklePath, hipPath, args[4:])
+        options = args[4:]
+        options = interpretClassifyOptions(options)
         return (True, (anklePath, hipPath, options))
 
     elif method == 'experiment':
@@ -33,8 +34,8 @@ def interpretClassifyOptions(options):
             }
 
     defaultVals = {
-            'c': ['all'],
-            'a': ['all'],
+            'c': 'trained',
+            'a': 'SVM',
             'f': 'all',
             'p': None
             }

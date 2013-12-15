@@ -15,6 +15,7 @@ from inputInterpreter import interpretInput
 
 
 def main(args):
+    print(args[0])
     classification, arguments = interpretInput(args)
 
     if classification:
@@ -29,8 +30,8 @@ def classify(anklePath, hipPath, options):
     print("---- Classification ---- \n")
     print("Calculating features...")
     features = getFeatures(anklePath, hipPath)
-    data = fm.main(True, options['p'])
     print("Predicting classification...")
+    data = fm.main(True, options['p'])
     result = cm.predict(data, features,
                         options['a'], options['c'], options['f'])
     print(result)
