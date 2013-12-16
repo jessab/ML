@@ -36,11 +36,15 @@ def interpretClassifyOptions(options):
     defaultVals = {
             'c': 'trained',
             'a': 'SVM',
-            'f': 'RFECV',
+            'f': 'all',
             'p': None
             }
-
-    return lookForNextOptions(options, posOptions, defaultVals)
+    
+    vals = lookForNextOptions(options, posOptions, defaultVals)
+    
+    if vals['f']=='RFECV':
+        raise NotImplementedError("RFECV is currently unavailable for classification due to problems with feature scaling.")
+    return vals
 
 
 def interpretExperimentOptions(options):

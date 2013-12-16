@@ -115,20 +115,20 @@ def predict(data, samples, classifier='SVM',
         classifySurface = True
     if (classifier == "SVM"):
         clf = cl.classifyDataSVM(data, classifyTrained,
-                                 classifySurface, selectFeatures)
+                                 classifySurface, selectFeatures,scaling=False)
     elif (classifier == "DT"):
         clf = cl.classifyDataDT(data, classifyTrained,
-                                classifySurface, selectFeatures)
+                                classifySurface, selectFeatures,scaling=False)
     elif (classifier == "KNN"):
         clf = cl.classifyDataKNN(data, classifyTrained,
-                                 classifySurface, selectFeatures)
+                                 classifySurface, selectFeatures,scaling=False)
     elif (classifier == "LogReg"):
         clf = cl.classifyDataLR(data, classifyTrained,
-                                classifySurface, selectFeatures)
+                                classifySurface, selectFeatures,scaling=False)
     else:
         print (str(classifier) + " is not a valid option")
         
-    [samples, _,_,_] = clf.extractData(samples)
+    [samples, _,_,_] = clf.extractData(samples,scaling=False)
     
     predictions = [clf.predict(s) for s in samples]
     return predictions

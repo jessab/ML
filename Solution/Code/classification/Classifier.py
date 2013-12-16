@@ -35,7 +35,7 @@ def shouldReplace(a):
     except:
         return False
 
-def extractData(features, examples=None, scaler=None, featureOrder=None):
+def extractData(features, examples=None, scaler=None, featureOrder=None, scaling=False):
     vec = DictVectorizer()
     samples = vec.fit_transform(features)
     featureNames = vec.get_feature_names()
@@ -59,7 +59,8 @@ def extractData(features, examples=None, scaler=None, featureOrder=None):
 #         scaler = pp.StandardScaler(with_mean=False)
 #         scaler.fit(samples)
 #     samples = scaler.transform(samples)
-    pp.scale(samples,with_mean=False)
+    if (scaling):
+        samples = pp.scale(samples,with_mean=False)
     if (sprs.isspmatrix(samples)):
         samples = samples.todense()
     
@@ -78,6 +79,8 @@ def selectKBestFeatures(samples, classifications, featureNames, nbFeatures=10):
 def selectBestFeaturesRFECV(samples, classifications,
                             featureNames, classifierClass):
     fs = RFECV(classifierClass.getEstimator())
+    if (not sprs.issparse(samples)):
+        samples = sprs.csr_matrix(samples)
     samples = fs.fit_transform(samples.toarray(), classifications)
     sup = fs.get_support()
     
@@ -172,9 +175,9 @@ def selectClassifications(data,classifyTrained,classifySurface):
 
 
 def classifyData(data, classifyTrained, classifySurface,
-                 classifierClass, featuresSelect):
+            classifierClass, featuresSelect,scaling=False):
     features = tls.getDictArray(data.Features)
-    [samples, featureNames,imputer,scaler] = extractData(features)
+    [samples, featureNames,imputer,scaler] = extractData(features,scaling=scaling)
     [classifications, classNames] = selectClassifications(data,
                                     classifyTrained, classifySurface)
 
@@ -192,33 +195,33 @@ def classifyData(data, classifyTrained, classifySurface,
 
 
 def classifyDataDT(data, classifyTrained,
-                   classifySurface, selectFeatures=('KUC', 10)):
+                classifySurface, selectFeatures=('KUC', 10),scaling=True):
     if 'RFECV' in selectFeatures:
         print('RFECV cannot be used in combination with DT')
         raise SystemExit(0)
     return classifyData(data, classifyTrained,
-                        classifySurface, DTClassifier, selectFeatures)
+                classifySurface, DTClassifier, selectFeatures,scaling)
 
 
 def classifyDataSVM(data, classifyTrained,
-                    classifySurface, selectFeatures=('KUC', 10)):
+                classifySurface, selectFeatures=('KUC', 10),scaling=True):
     return classifyData(data, classifyTrained, classifySurface,
-                        SVMClassifier, selectFeatures)
+                        SVMClassifier, selectFeatures,scaling)
 
 
 def classifyDataKNN(data, classifyTrained,
-                    classifySurface, selectFeatures=('KUC', 10)):
+                classifySurface, selectFeatures=('KUC', 10),scaling=True):
     if 'RFECV' in selectFeatures:
         print('RFECV cannot be used in combination with KNN')
         raise Exception
     return classifyData(data, classifyTrained, classifySurface,
-                        KNNClassifier, selectFeatures)
+                        KNNClassifier, selectFeatures,scaling)
 
 
 def classifyDataLR(data, classifyTrained,
-                   classifySurface, selectFeatures=('KUC', 10)):
+                classifySurface, selectFeatures=('KUC', 10),scaling=True):
     return classifyData(data, classifyTrained,
-                        classifySurface, LRClassifier, selectFeatures)
+                    classifySurface, LRClassifier, selectFeatures,scaling)
 
 
 class Classifier(object):
@@ -312,8 +315,8 @@ class Classifier(object):
         self.scaler = scaler
         self.imputer = imputer
         
-    def extractData(self,X):
-        return extractData(X, self.samples, self.scaler, self.featureNames)
+    def extractData(self,X,scaling=False):
+        return extractData(X, self.samples, self.scaler, self.featureNames,scaling)
 
 class SVMClassifier(Classifier):
 
