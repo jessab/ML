@@ -131,10 +131,7 @@ def predict(data, samples, classifier='SVM',
     else:
         print (str(classifier) + " is not a valid option")
         
-    [samples, featureNames] = cl.extractData(samples,False)
-    
-    indices = [featureNames.index(feature) for feature in clf.getFeatureNames()]
-    samples = samples[:,indices]
+    [samples, _,_,_] = clf.extractData(samples)
     
     predictions = [clf.predict(s) for s in samples]
     return predictions

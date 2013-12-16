@@ -75,7 +75,7 @@ def setClassifier(options, posOptions, vals):
         print('classifier was expected')
         raise SystemExit(0)
     vals['c'] = c
-    return lookForNextOptions(options, posOptions, vals)
+    return lookForNextOptions(options[1:], posOptions, vals)
 
 
 def setAlgo(options, posOptions, vals):

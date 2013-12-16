@@ -17,6 +17,7 @@ from sklearn.feature_selection import SelectKBest, RFECV, f_classif
 from sklearn import preprocessing as pp
 import pylab as pl
 from matplotlib import colors
+from scipy import sparse as sprs
 import tools.Tools as tls
 import numpy as np
 from scipy.sparse import csr_matrix
@@ -28,15 +29,41 @@ def surfaces():
 def trainedClasses():
     return ["Untrained", "Trained"]
 
-def extractData(features):
+def shouldReplace(a):
+    try:
+        return np.isnan(a)
+    except:
+        return False
+
+def extractData(features, examples=None, scaler=None, featureOrder=None):
     vec = DictVectorizer()
     samples = vec.fit_transform(features)
-    imp = pp.Imputer(missing_values='NaN', strategy='mean')
-    imp.fit(samples)
-    samples = imp.transform(samples)
-    samples = pp.scale(samples, with_mean=False)
     featureNames = vec.get_feature_names()
-    return [samples, featureNames]
+    
+    if (featureOrder != None):
+        indices = [featureNames.index(feature) for feature in featureOrder]
+        samples = samples[:, indices]
+    imp = pp.Imputer(missing_values='NaN', strategy='mean')
+    if (examples == None):
+        imp.fit(samples)
+    else :
+        imp.fit(examples)
+    impSamples = imp.transform(samples)
+    if (impSamples.shape == samples.shape):
+        samples = impSamples
+    else:
+        print("too few samples to replace missing values, using 0's")
+        samples[shouldReplace(samples)]=0
+    
+#     if (scaler == None):
+#         scaler = pp.StandardScaler(with_mean=False)
+#         scaler.fit(samples)
+#     samples = scaler.transform(samples)
+    pp.scale(samples,with_mean=False)
+    if (sprs.isspmatrix(samples)):
+        samples = samples.todense()
+    
+    return [samples, featureNames,imp,scaler]
 
 def selectKBestFeatures(samples, classifications, featureNames, nbFeatures=10):
     fs = SelectKBest(f_classif, k=nbFeatures)
@@ -147,7 +174,7 @@ def selectClassifications(data,classifyTrained,classifySurface):
 def classifyData(data, classifyTrained, classifySurface,
                  classifierClass, featuresSelect):
     features = tls.getDictArray(data.Features)
-    [samples, featureNames] = extractData(features)
+    [samples, featureNames,imputer,scaler] = extractData(features)
     [classifications, classNames] = selectClassifications(data,
                                     classifyTrained, classifySurface)
 
@@ -159,6 +186,7 @@ def classifyData(data, classifyTrained, classifySurface,
         print('Using all features')
     classifier = classifierClass(samples, featureNames,
                                  classifications, classNames)
+    classifier.setTransformOperators(imputer,scaler)
 
     return classifier
 
@@ -219,7 +247,7 @@ class Classifier(object):
 
     def predict(self, sample):
         p = self.getClf().predict(sample)
-        return self.classNames[p]
+        return self.classNames[0+p]
 
     def score(self, samples, classifications):
         return self.getClf().score(samples, classifications)
@@ -279,9 +307,13 @@ class Classifier(object):
 
     def classifierName(self):
         return "undefined"
-
-        pl.show()
-
+        
+    def setTransformOperators(self,imputer,scaler):
+        self.scaler = scaler
+        self.imputer = imputer
+        
+    def extractData(self,X):
+        return extractData(X, self.samples, self.scaler, self.featureNames)
 
 class SVMClassifier(Classifier):
 
