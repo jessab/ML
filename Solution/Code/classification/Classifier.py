@@ -362,7 +362,7 @@ class DTClassifier(Classifier):
                  classifications, classificationNames):
         self.clf = tree.DecisionTreeClassifier(min_samples_split=8,
                                                max_depth=4)
-        if (type(samples) != np.ndarray):
+        if (type(samples) == sprs.csr_matrix):
             samples = samples.toarray()
         Classifier.__init__(self, samples, featureNames,
                             classifications, classificationNames)

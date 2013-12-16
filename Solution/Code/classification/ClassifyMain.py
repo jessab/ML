@@ -14,7 +14,7 @@ import pylab
 import warnings
 warnings.filterwarnings("ignore")
 
-plotSurfaces=True
+plotSurfaces=False
 showSVM = True
 showDT = True
 showKNN = True
@@ -25,9 +25,6 @@ def main(data=None, selectFeatures='all'):
     if (data is None):
         data = fm.main()
 
-    if 'RFECV' in selectFeatures:
-        showDT = False
-        showKNN = False
 
     if (showSVM):
         print("\nSVM: trained/not trained")
